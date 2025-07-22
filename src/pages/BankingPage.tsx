@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,10 +16,12 @@ import {
   CheckCircle,
   ArrowRight
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const BankingPage = () => {
   const [selectedBank, setSelectedBank] = useState<string>("");
   const [showApplication, setShowApplication] = useState(false);
+  const navigate = useNavigate();
 
   const bankingMilestones = [
     {
@@ -75,6 +76,18 @@ const BankingPage = () => {
     }
   ];
 
+  const updatedBankingMilestones = [
+    ...bankingMilestones,
+    {
+      id: 5,
+      title: "Build Business Credit",
+      description: "Establish credit profile and secure funding for growth",
+      completed: false,
+      current: false,
+      icon: TrendingUp
+    }
+  ];
+
   if (showApplication) {
     return (
       <div className="min-h-screen bg-background">
@@ -115,7 +128,7 @@ const BankingPage = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {bankingMilestones.map((milestone, index) => {
+              {updatedBankingMilestones.map((milestone, index) => {
                 const Icon = milestone.icon;
                 return (
                   <div key={milestone.id} className="flex items-center space-x-4">
@@ -137,9 +150,37 @@ const BankingPage = () => {
                     {milestone.current && (
                       <Badge>Current Step</Badge>
                     )}
+                    {milestone.id === 5 && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate("/credit-funding")}
+                      >
+                        Start Credit Building
+                      </Button>
+                    )}
                   </div>
                 );
               })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Add Credit & Funding CTA */}
+        <Card className="mb-8 bg-gradient-to-r from-primary/10 to-blue-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold mb-2">Ready to Build Business Credit?</h3>
+                <p className="text-muted-foreground mb-4">
+                  Once your bank account is set up, start building strong business credit with our AI-powered roadmap
+                </p>
+                <Button onClick={() => navigate("/credit-funding")}>
+                  Access Credit & Funding Hub
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+              <div className="text-6xl opacity-20">💳</div>
             </div>
           </CardContent>
         </Card>
