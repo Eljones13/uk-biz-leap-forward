@@ -10,6 +10,70 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Placeholder components for missing routes
+const WizardPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-4">Company Registration Wizard</h1>
+      <p className="text-muted-foreground">Wizard implementation coming soon...</p>
+    </div>
+  </div>
+);
+
+const DocumentsPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-4">Documents</h1>
+      <p className="text-muted-foreground">Document management coming soon...</p>
+    </div>
+  </div>
+);
+
+const CompliancePage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-4">Compliance Dashboard</h1>
+      <p className="text-muted-foreground">Compliance tracking coming soon...</p>
+    </div>
+  </div>
+);
+
+const PricingPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-4">Pricing Plans</h1>
+      <p className="text-muted-foreground">Pricing page coming soon...</p>
+    </div>
+  </div>
+);
+
+const SupportPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-4">Help & Support</h1>
+      <p className="text-muted-foreground">Support center coming soon...</p>
+    </div>
+  </div>
+);
+
+const SettingsPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-4">Account Settings</h1>
+      <p className="text-muted-foreground">Settings page coming soon...</p>
+    </div>
+  </div>
+);
+
+const BankingPage = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="text-2xl font-bold mb-4">Banking Setup</h1>
+      <p className="text-muted-foreground">Banking integration coming soon...</p>
+    </div>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -19,6 +83,13 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/wizard/*" element={<WizardPage />} />
+          <Route path="/documents" element={<DocumentsPage />} />
+          <Route path="/compliance" element={<CompliancePage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/banking/*" element={<BankingPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

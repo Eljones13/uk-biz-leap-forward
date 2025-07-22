@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -5,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   Building2, CheckCircle, Clock, AlertTriangle, Trophy, 
-  TrendingUp, Users, FileText, Calendar, Zap, Target
+  TrendingUp, Users, FileText, Calendar, Zap, Target, Settings, CreditCard, BookOpen
 } from "lucide-react";
 import { SuccessCelebration } from "./SuccessCelebration";
 import { PriorityTaskCard } from "./PriorityTaskCard";
 import { ProgressMilestones } from "./ProgressMilestones";
+import { useNavigate } from "react-router-dom";
 
 interface EnhancedDashboardProps {
   userPersona: string;
@@ -19,6 +21,7 @@ interface EnhancedDashboardProps {
 export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashboardProps) => {
   const [showCelebration, setShowCelebration] = useState(false);
   const [completedMilestones, setCompletedMilestones] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   // Mock data - will be replaced with real data
   const overallProgress = 35;
@@ -36,7 +39,8 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
       estimatedTime: "5 minutes",
       completionValue: "£12 saved in resubmission fees",
       category: "legal",
-      deadline: "Today"
+      deadline: "Today",
+      action: () => navigate("/wizard/company-details")
     },
     {
       id: 2,
@@ -46,7 +50,8 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
       estimatedTime: "10 minutes",
       completionValue: "Move 25% closer to incorporation",
       category: "legal",
-      deadline: "Tomorrow"
+      deadline: "Tomorrow",
+      action: () => navigate("/wizard/directors")
     },
     {
       id: 3,
@@ -56,7 +61,8 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
       estimatedTime: "15 minutes",
       completionValue: "Fast-track banking once incorporated",
       category: "financial",
-      deadline: "This week"
+      deadline: "This week",
+      action: () => navigate("/banking/setup")
     }
   ];
 
@@ -73,6 +79,14 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
     { name: "Detail Oriented", icon: Target, earned: true },
     { name: "Speed Demon", icon: Zap, earned: false }
   ];
+
+  // Navigation handlers
+  const handleStartWizard = () => navigate("/wizard");
+  const handleViewPricing = () => navigate("/pricing");
+  const handleViewDocuments = () => navigate("/documents");
+  const handleViewCompliance = () => navigate("/compliance");
+  const handleViewSupport = () => navigate("/support");
+  const handleViewSettings = () => navigate("/settings");
 
   useEffect(() => {
     // Check for new completions and trigger celebrations
@@ -106,10 +120,40 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
               </h1>
               <p className="text-muted-foreground">{getPersonaMessage()}</p>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-primary">{overallProgress}%</div>
-              <div className="text-sm text-muted-foreground">Complete</div>
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <div className="text-2xl font-bold text-primary">{overallProgress}%</div>
+                <div className="text-sm text-muted-foreground">Complete</div>
+              </div>
+              <Button variant="outline" size="sm" onClick={handleViewSettings}>
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
             </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Button onClick={handleStartWizard} className="flex items-center">
+              <Building2 className="h-4 w-4 mr-2" />
+              Continue Setup
+            </Button>
+            <Button variant="outline" onClick={handleViewDocuments}>
+              <FileText className="h-4 w-4 mr-2" />
+              Documents
+            </Button>
+            <Button variant="outline" onClick={handleViewCompliance}>
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Compliance
+            </Button>
+            <Button variant="outline" onClick={handleViewPricing}>
+              <CreditCard className="h-4 w-4 mr-2" />
+              Upgrade Plan
+            </Button>
+            <Button variant="outline" onClick={handleViewSupport}>
+              <BookOpen className="h-4 w-4 mr-2" />
+              Help & Support
+            </Button>
           </div>
 
           {/* Progress Overview */}
