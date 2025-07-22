@@ -11,6 +11,7 @@ import WizardPage from "./pages/WizardPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import CompliancePage from "./pages/CompliancePage";
 import PricingPage from "./pages/PricingPage";
+import BankingPage from "./pages/BankingPage";
 
 const queryClient = new QueryClient();
 
@@ -29,15 +30,6 @@ const SettingsPage = () => (
     <div className="text-center">
       <h1 className="text-2xl font-bold mb-4">Account Settings</h1>
       <p className="text-muted-foreground">Settings page coming soon...</p>
-    </div>
-  </div>
-);
-
-const BankingPage = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-4">Banking Setup</h1>
-      <p className="text-muted-foreground">Banking integration coming soon...</p>
     </div>
   </div>
 );
