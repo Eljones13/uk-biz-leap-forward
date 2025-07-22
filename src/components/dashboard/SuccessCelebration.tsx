@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trophy, X, Confetti } from "lucide-react";
+import { Trophy, X } from "lucide-react";
 
 interface SuccessCelebrationProps {
   onClose: () => void;

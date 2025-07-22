@@ -1,7 +1,6 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, Users, CheckCircle, TrendingUp } from "lucide-react";
+import { Star, Users, CheckCircle, TrendingUp, Building2, Clock } from "lucide-react";
 
 export const SocialProofSection = () => {
   const testimonials = [

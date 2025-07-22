@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -30,7 +29,7 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
       id: 1,
       title: "Complete company name verification",
       description: "Verify your chosen name is available with Companies House",
-      priority: "high",
+      priority: "high" as const,
       estimatedTime: "5 minutes",
       completionValue: "£12 saved in resubmission fees",
       category: "legal",
@@ -40,7 +39,7 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
       id: 2,
       title: "Add director information",
       description: "Complete details for all company directors",
-      priority: "medium",
+      priority: "medium" as const,
       estimatedTime: "10 minutes",
       completionValue: "Move 25% closer to incorporation",
       category: "legal",
@@ -50,7 +49,7 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
       id: 3,
       title: "Set up business bank account preparation",
       description: "Gather documents needed for business banking",
-      priority: userPersona === "priya" ? "high" : "low",
+      priority: (userPersona === "priya" ? "high" : "low") as const,
       estimatedTime: "15 minutes",
       completionValue: "Fast-track banking once incorporated",
       category: "financial",
@@ -59,11 +58,11 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
   ];
 
   const milestones = [
-    { id: 1, title: "Business Structure Chosen", progress: 100, status: "completed" },
-    { id: 2, title: "Company Details", progress: 75, status: "in-progress" },
-    { id: 3, title: "Legal Documentation", progress: 20, status: "pending" },
-    { id: 4, title: "Financial Setup", progress: 0, status: "pending" },
-    { id: 5, title: "Compliance Ready", progress: 0, status: "pending" }
+    { id: 1, title: "Business Structure Chosen", progress: 100, status: "completed" as const },
+    { id: 2, title: "Company Details", progress: 75, status: "in-progress" as const },
+    { id: 3, title: "Legal Documentation", progress: 20, status: "pending" as const },
+    { id: 4, title: "Financial Setup", progress: 0, status: "pending" as const },
+    { id: 5, title: "Compliance Ready", progress: 0, status: "pending" as const }
   ];
 
   const achievements = [
