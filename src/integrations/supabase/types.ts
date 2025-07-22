@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_advisor_sessions: {
+        Row: {
+          ai_response: Json | null
+          created_at: string
+          id: string
+          input_data: Json
+          recommendations: string[] | null
+          session_type: string
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_response?: Json | null
+          created_at?: string
+          id?: string
+          input_data: Json
+          recommendations?: string[] | null
+          session_type: string
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_response?: Json | null
+          created_at?: string
+          id?: string
+          input_data?: Json
+          recommendations?: string[] | null
+          session_type?: string
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       clause_explanations: {
         Row: {
           action_required: boolean | null
@@ -102,6 +138,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      company_registrations: {
+        Row: {
+          companies_house_number: string | null
+          company_name: string
+          company_type: string
+          created_at: string
+          directors: Json | null
+          id: string
+          incorporation_date: string | null
+          registered_address: Json | null
+          registration_status: string | null
+          shareholders: Json | null
+          sic_codes: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          companies_house_number?: string | null
+          company_name: string
+          company_type?: string
+          created_at?: string
+          directors?: Json | null
+          id?: string
+          incorporation_date?: string | null
+          registered_address?: Json | null
+          registration_status?: string | null
+          shareholders?: Json | null
+          sic_codes?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          companies_house_number?: string | null
+          company_name?: string
+          company_type?: string
+          created_at?: string
+          directors?: Json | null
+          id?: string
+          incorporation_date?: string | null
+          registered_address?: Json | null
+          registration_status?: string | null
+          shareholders?: Json | null
+          sic_codes?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       document_analysis: {
         Row: {
@@ -229,6 +313,53 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_documents: {
+        Row: {
+          company_registration_id: string | null
+          created_at: string
+          document_data: Json
+          document_type: string
+          generated_content: string | null
+          id: string
+          signed_at: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_registration_id?: string | null
+          created_at?: string
+          document_data: Json
+          document_type: string
+          generated_content?: string | null
+          id?: string
+          signed_at?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_registration_id?: string | null
+          created_at?: string
+          document_data?: Json
+          document_type?: string
+          generated_content?: string | null
+          id?: string
+          signed_at?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_documents_company_registration_id_fkey"
+            columns: ["company_registration_id"]
+            isOneToOne: false
+            referencedRelation: "company_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           age_group: Database["public"]["Enums"]["age_group"]
@@ -292,6 +423,54 @@ export type Database = {
           title?: string
           updated_at?: string
           video_url?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          subscription_expires_at: string | null
+          subscription_status: string | null
+          subscription_tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          subscription_expires_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          subscription_expires_at?: string | null
+          subscription_status?: string | null
+          subscription_tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -392,6 +571,39 @@ export type Database = {
           },
         ]
       }
+      user_progress_tracking: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          milestone_data: Json | null
+          milestone_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          milestone_data?: Json | null
+          milestone_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          milestone_data?: Json | null
+          milestone_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -415,6 +627,8 @@ export type Database = {
         | "financial"
         | "rights"
         | "general"
+      subscription_tier: "free" | "starter" | "growth" | "scale"
+      user_role: "entrepreneur" | "advisor" | "affiliate" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -559,6 +773,8 @@ export const Constants = {
         "rights",
         "general",
       ],
+      subscription_tier: ["free", "starter", "growth", "scale"],
+      user_role: ["entrepreneur", "advisor", "affiliate", "admin"],
     },
   },
 } as const
