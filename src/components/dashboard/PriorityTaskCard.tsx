@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, ArrowRight, AlertTriangle, CheckCircle, DollarSign } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Task {
   id: number;
@@ -21,6 +22,8 @@ interface PriorityTaskCardProps {
 }
 
 export const PriorityTaskCard = ({ task, userPersona }: PriorityTaskCardProps) => {
+  const navigate = useNavigate();
+
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high": return "destructive";
@@ -48,6 +51,40 @@ export const PriorityTaskCard = ({ task, userPersona }: PriorityTaskCardProps) =
       default:
         return "Start task";
     }
+  };
+
+  const getTaskRoute = () => {
+    // Route based on task category or title
+    const taskLower = task.title.toLowerCase();
+    const categoryLower = task.category.toLowerCase();
+
+    if (taskLower.includes("company") || taskLower.includes("incorporation") || 
+        taskLower.includes("register") || categoryLower.includes("formation")) {
+      return "/wizard";
+    }
+    
+    if (taskLower.includes("document") || taskLower.includes("template") || 
+        categoryLower.includes("document")) {
+      return "/documents";
+    }
+    
+    if (taskLower.includes("compliance") || taskLower.includes("filing") || 
+        taskLower.includes("deadline") || categoryLower.includes("compliance")) {
+      return "/compliance";
+    }
+    
+    if (taskLower.includes("banking") || taskLower.includes("account") || 
+        categoryLower.includes("banking")) {
+      return "/banking";
+    }
+
+    // Default to wizard for company setup tasks
+    return "/wizard";
+  };
+
+  const handleTaskClick = () => {
+    const route = getTaskRoute();
+    navigate(route);
   };
 
   const PriorityIcon = getPriorityIcon(task.priority);
@@ -96,7 +133,7 @@ export const PriorityTaskCard = ({ task, userPersona }: PriorityTaskCardProps) =
           </div>
 
           {/* Action Button */}
-          <Button size="sm" className="w-full group">
+          <Button size="sm" className="w-full group" onClick={handleTaskClick}>
             {getPersonaSpecificCTA()}
             <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
           </Button>
