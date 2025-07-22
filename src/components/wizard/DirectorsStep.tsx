@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -69,13 +68,15 @@ export const DirectorsStep = ({ data, onUpdate, onNext }: DirectorsStepProps) =>
       if (director.id === id) {
         if (field.includes('.')) {
           const [parent, child] = field.split('.');
-          return {
-            ...director,
-            [parent]: {
-              ...director[parent as keyof Director],
-              [child]: value
-            }
-          };
+          if (parent === 'address') {
+            return {
+              ...director,
+              address: {
+                ...director.address,
+                [child]: value
+              }
+            };
+          }
         }
         return { ...director, [field]: value };
       }
