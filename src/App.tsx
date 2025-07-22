@@ -7,46 +7,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import WizardPage from "./pages/WizardPage";
+import DocumentsPage from "./pages/DocumentsPage";
+import CompliancePage from "./pages/CompliancePage";
+import PricingPage from "./pages/PricingPage";
 
 const queryClient = new QueryClient();
 
-// Placeholder components for missing routes
-const WizardPage = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-4">Company Registration Wizard</h1>
-      <p className="text-muted-foreground">Wizard implementation coming soon...</p>
-    </div>
-  </div>
-);
-
-const DocumentsPage = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-4">Documents</h1>
-      <p className="text-muted-foreground">Document management coming soon...</p>
-    </div>
-  </div>
-);
-
-const CompliancePage = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-4">Compliance Dashboard</h1>
-      <p className="text-muted-foreground">Compliance tracking coming soon...</p>
-    </div>
-  </div>
-);
-
-const PricingPage = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <h1 className="text-2xl font-bold mb-4">Pricing Plans</h1>
-      <p className="text-muted-foreground">Pricing page coming soon...</p>
-    </div>
-  </div>
-);
-
+// Placeholder components for remaining missing routes
 const SupportPage = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
