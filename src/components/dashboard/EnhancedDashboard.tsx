@@ -24,6 +24,9 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
   const overallProgress = 35;
   const completionStreak = 3;
   
+  // Fix the conditional priority assignment
+  const bankingPriority = userPersona === "priya" ? "high" as const : "low" as const;
+  
   const priorityTasks = [
     {
       id: 1,
@@ -49,7 +52,7 @@ export const EnhancedDashboard = ({ userPersona, customizations }: EnhancedDashb
       id: 3,
       title: "Set up business bank account preparation",
       description: "Gather documents needed for business banking",
-      priority: (userPersona === "priya" ? "high" : "low") as const,
+      priority: bankingPriority,
       estimatedTime: "15 minutes",
       completionValue: "Fast-track banking once incorporated",
       category: "financial",
