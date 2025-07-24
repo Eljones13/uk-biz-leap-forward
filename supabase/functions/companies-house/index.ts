@@ -1,4 +1,4 @@
-import Deno from "https://deno.land/x/deno_core@0.254.0/mod.ts";
+
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
