@@ -13,7 +13,7 @@ interface AuditEvent {
   action_type: string;
   table_name?: string;
   created_at: string;
-  ip_address?: string;
+  ip_address?: string | null;
   user_agent?: string;
 }
 
@@ -35,7 +35,10 @@ export const AuditLog = () => {
           .limit(50);
           
         if (error) throw error;
-        setAuditEvents(data || []);
+        setAuditEvents((data || []).map(event => ({
+          ...event,
+          ip_address: event.ip_address?.toString() || null
+        })));
       } catch (error) {
         console.error("Error fetching audit events:", error);
       } finally {
