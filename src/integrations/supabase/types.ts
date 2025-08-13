@@ -83,6 +83,226 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_logs: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          table_name: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      budget_items: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          grant_id: string | null
+          id: string
+          quantity: number | null
+          total: number | null
+          unit_cost: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          grant_id?: string | null
+          id?: string
+          quantity?: number | null
+          total?: number | null
+          unit_cost?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          grant_id?: string | null
+          id?: string
+          quantity?: number | null
+          total?: number | null
+          unit_cost?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_items_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "grants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cic_applications: {
+        Row: {
+          cic_name: string | null
+          cic_structure: string | null
+          cic36_form_data: Json | null
+          community_purpose: string | null
+          completed_stages: string[] | null
+          created_at: string
+          current_stage: string | null
+          dbs_checks_required: boolean | null
+          employment_sectors: string[] | null
+          id: string
+          jumpstart_cv_builder_access: boolean | null
+          jumpstart_directory_listing: boolean | null
+          jumpstart_partnership_opted_in: boolean | null
+          mission_statement: string | null
+          progress_percentage: number | null
+          safeguarding_policy_required: boolean | null
+          skills_programs: string[] | null
+          status: string | null
+          submitted_at: string | null
+          target_age_ranges: string[] | null
+          updated_at: string
+          user_id: string
+          youth_employment_template_data: Json | null
+          youth_protection_measures: string[] | null
+        }
+        Insert: {
+          cic_name?: string | null
+          cic_structure?: string | null
+          cic36_form_data?: Json | null
+          community_purpose?: string | null
+          completed_stages?: string[] | null
+          created_at?: string
+          current_stage?: string | null
+          dbs_checks_required?: boolean | null
+          employment_sectors?: string[] | null
+          id?: string
+          jumpstart_cv_builder_access?: boolean | null
+          jumpstart_directory_listing?: boolean | null
+          jumpstart_partnership_opted_in?: boolean | null
+          mission_statement?: string | null
+          progress_percentage?: number | null
+          safeguarding_policy_required?: boolean | null
+          skills_programs?: string[] | null
+          status?: string | null
+          submitted_at?: string | null
+          target_age_ranges?: string[] | null
+          updated_at?: string
+          user_id: string
+          youth_employment_template_data?: Json | null
+          youth_protection_measures?: string[] | null
+        }
+        Update: {
+          cic_name?: string | null
+          cic_structure?: string | null
+          cic36_form_data?: Json | null
+          community_purpose?: string | null
+          completed_stages?: string[] | null
+          created_at?: string
+          current_stage?: string | null
+          dbs_checks_required?: boolean | null
+          employment_sectors?: string[] | null
+          id?: string
+          jumpstart_cv_builder_access?: boolean | null
+          jumpstart_directory_listing?: boolean | null
+          jumpstart_partnership_opted_in?: boolean | null
+          mission_statement?: string | null
+          progress_percentage?: number | null
+          safeguarding_policy_required?: boolean | null
+          skills_programs?: string[] | null
+          status?: string | null
+          submitted_at?: string | null
+          target_age_ranges?: string[] | null
+          updated_at?: string
+          user_id?: string
+          youth_employment_template_data?: Json | null
+          youth_protection_measures?: string[] | null
+        }
+        Relationships: []
+      }
+      cic_network_directory: {
+        Row: {
+          accepting_referrals: boolean | null
+          cic_application_id: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          focus_areas: string[] | null
+          id: string
+          is_public: boolean | null
+          location: string | null
+          public_name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          accepting_referrals?: boolean | null
+          cic_application_id?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          is_public?: boolean | null
+          location?: string | null
+          public_name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          accepting_referrals?: boolean | null
+          cic_application_id?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          is_public?: boolean | null
+          location?: string | null
+          public_name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cic_network_directory_cic_application_id_fkey"
+            columns: ["cic_application_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clause_explanations: {
         Row: {
           action_required: boolean | null
@@ -271,6 +491,426 @@ export type Database = {
         }
         Relationships: []
       }
+      employment_outcomes: {
+        Row: {
+          created_at: string | null
+          employer_name: string | null
+          employment_type: Database["public"]["Enums"]["employment_type"] | null
+          end_date: string | null
+          id: string
+          job_title: string | null
+          jumpstart_placement: boolean | null
+          participant_id: string | null
+          progression_notes: string | null
+          retention_90_day: boolean | null
+          retention_check_date: string | null
+          salary_range: string | null
+          start_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          employer_name?: string | null
+          employment_type?:
+            | Database["public"]["Enums"]["employment_type"]
+            | null
+          end_date?: string | null
+          id?: string
+          job_title?: string | null
+          jumpstart_placement?: boolean | null
+          participant_id?: string | null
+          progression_notes?: string | null
+          retention_90_day?: boolean | null
+          retention_check_date?: string | null
+          salary_range?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          employer_name?: string | null
+          employment_type?:
+            | Database["public"]["Enums"]["employment_type"]
+            | null
+          end_date?: string | null
+          id?: string
+          job_title?: string | null
+          jumpstart_placement?: boolean | null
+          participant_id?: string | null
+          progression_notes?: string | null
+          retention_90_day?: boolean | null
+          retention_check_date?: string | null
+          salary_range?: string | null
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employment_outcomes_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grant_applications: {
+        Row: {
+          ai_assistance_used: boolean | null
+          application_data: Json | null
+          cic_application_id: string | null
+          collaboration_cics: string[] | null
+          created_at: string
+          grant_id: string
+          id: string
+          jumpstart_referral_enabled: boolean | null
+          status: string | null
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_assistance_used?: boolean | null
+          application_data?: Json | null
+          cic_application_id?: string | null
+          collaboration_cics?: string[] | null
+          created_at?: string
+          grant_id: string
+          id?: string
+          jumpstart_referral_enabled?: boolean | null
+          status?: string | null
+          submitted_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_assistance_used?: boolean | null
+          application_data?: Json | null
+          cic_application_id?: string | null
+          collaboration_cics?: string[] | null
+          created_at?: string
+          grant_id?: string
+          id?: string
+          jumpstart_referral_enabled?: boolean | null
+          status?: string | null
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grant_applications_cic_application_id_fkey"
+            columns: ["cic_application_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "grant_applications_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "grants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grants: {
+        Row: {
+          application_deadline: string | null
+          created_at: string
+          description: string | null
+          eligibility_criteria: Json | null
+          funder_name: string
+          funding_amount_max: number | null
+          funding_amount_min: number | null
+          geographic_coverage: string[] | null
+          grant_type: string
+          guidance: string | null
+          id: string
+          is_active: boolean | null
+          jumpstart_partnership_bonus: boolean | null
+          partnership_opportunities: boolean | null
+          question_set: Json | null
+          skills_focus: string[] | null
+          target_age_ranges: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          application_deadline?: string | null
+          created_at?: string
+          description?: string | null
+          eligibility_criteria?: Json | null
+          funder_name: string
+          funding_amount_max?: number | null
+          funding_amount_min?: number | null
+          geographic_coverage?: string[] | null
+          grant_type?: string
+          guidance?: string | null
+          id?: string
+          is_active?: boolean | null
+          jumpstart_partnership_bonus?: boolean | null
+          partnership_opportunities?: boolean | null
+          question_set?: Json | null
+          skills_focus?: string[] | null
+          target_age_ranges?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          application_deadline?: string | null
+          created_at?: string
+          description?: string | null
+          eligibility_criteria?: Json | null
+          funder_name?: string
+          funding_amount_max?: number | null
+          funding_amount_min?: number | null
+          geographic_coverage?: string[] | null
+          grant_type?: string
+          guidance?: string | null
+          id?: string
+          is_active?: boolean | null
+          jumpstart_partnership_bonus?: boolean | null
+          partnership_opportunities?: boolean | null
+          question_set?: Json | null
+          skills_focus?: string[] | null
+          target_age_ranges?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      impact_tracking: {
+        Row: {
+          cic_application_id: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          interaction_date: string | null
+          interaction_type: Database["public"]["Enums"]["interaction_type"]
+          jumpstart_sync_id: string | null
+          metadata: Json | null
+          notes: string | null
+          participant_id: string | null
+          success_indicator: boolean | null
+        }
+        Insert: {
+          cic_application_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          interaction_date?: string | null
+          interaction_type: Database["public"]["Enums"]["interaction_type"]
+          jumpstart_sync_id?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          participant_id?: string | null
+          success_indicator?: boolean | null
+        }
+        Update: {
+          cic_application_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          interaction_date?: string | null
+          interaction_type?: Database["public"]["Enums"]["interaction_type"]
+          jumpstart_sync_id?: string | null
+          metadata?: Json | null
+          notes?: string | null
+          participant_id?: string | null
+          success_indicator?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "impact_tracking_cic_application_id_fkey"
+            columns: ["cic_application_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "impact_tracking_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_applications: {
+        Row: {
+          application_data: Json | null
+          applied_at: string | null
+          id: string
+          job_id: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          application_data?: Json | null
+          applied_at?: string | null
+          id?: string
+          job_id: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          application_data?: Json | null
+          applied_at?: string | null
+          id?: string
+          job_id?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_interactions: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          job_id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          job_id: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          job_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_interactions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          company: string
+          description: string | null
+          external_id: string
+          external_url: string
+          id: string
+          is_active: boolean | null
+          job_board: string
+          location: string | null
+          posted_date: string | null
+          requirements: string[] | null
+          salary_max: number | null
+          salary_min: number | null
+          scraped_at: string | null
+          title: string
+        }
+        Insert: {
+          company: string
+          description?: string | null
+          external_id: string
+          external_url: string
+          id?: string
+          is_active?: boolean | null
+          job_board: string
+          location?: string | null
+          posted_date?: string | null
+          requirements?: string[] | null
+          salary_max?: number | null
+          salary_min?: number | null
+          scraped_at?: string | null
+          title: string
+        }
+        Update: {
+          company?: string
+          description?: string | null
+          external_id?: string
+          external_url?: string
+          id?: string
+          is_active?: boolean | null
+          job_board?: string
+          location?: string | null
+          posted_date?: string | null
+          requirements?: string[] | null
+          salary_max?: number | null
+          salary_min?: number | null
+          scraped_at?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      jumpstart_partnerships: {
+        Row: {
+          available_placements: number | null
+          cic_application_id: string | null
+          created_at: string | null
+          directory_listed: boolean | null
+          id: string
+          last_sync_at: string | null
+          safeguarding_contact: string | null
+          sync_status: string | null
+          tagline: string | null
+          target_age_range: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          available_placements?: number | null
+          cic_application_id?: string | null
+          created_at?: string | null
+          directory_listed?: boolean | null
+          id?: string
+          last_sync_at?: string | null
+          safeguarding_contact?: string | null
+          sync_status?: string | null
+          tagline?: string | null
+          target_age_range?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          available_placements?: number | null
+          cic_application_id?: string | null
+          created_at?: string | null
+          directory_listed?: boolean | null
+          id?: string
+          last_sync_at?: string | null
+          safeguarding_contact?: string | null
+          sync_status?: string | null
+          tagline?: string | null
+          target_age_range?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jumpstart_partnerships_cic_application_id_fkey"
+            columns: ["cic_application_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_modules: {
         Row: {
           age_group: Database["public"]["Enums"]["age_group"]
@@ -360,6 +1000,113 @@ export type Database = {
           },
         ]
       }
+      lender_reviews: {
+        Row: {
+          created_at: string
+          helpful_count: number | null
+          id: string
+          lender_id: string | null
+          rating: number
+          review_text: string | null
+          review_title: string | null
+          updated_at: string
+          user_id: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          lender_id?: string | null
+          rating: number
+          review_text?: string | null
+          review_title?: string | null
+          updated_at?: string
+          user_id?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          helpful_count?: number | null
+          id?: string
+          lender_id?: string | null
+          rating?: number
+          review_text?: string | null
+          review_title?: string | null
+          updated_at?: string
+          user_id?: string | null
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lender_reviews_lender_id_fkey"
+            columns: ["lender_id"]
+            isOneToOne: false
+            referencedRelation: "lenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lenders: {
+        Row: {
+          average_rating: number | null
+          coverage_areas: string[] | null
+          created_at: string
+          description: string | null
+          email: string | null
+          established_year: number | null
+          headquarters_location: string | null
+          id: string
+          is_active: boolean
+          lender_type: Database["public"]["Enums"]["lender_type"]
+          logo_url: string | null
+          name: string
+          nmls_id: string | null
+          phone: string | null
+          total_reviews: number | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          average_rating?: number | null
+          coverage_areas?: string[] | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          established_year?: number | null
+          headquarters_location?: string | null
+          id?: string
+          is_active?: boolean
+          lender_type?: Database["public"]["Enums"]["lender_type"]
+          logo_url?: string | null
+          name: string
+          nmls_id?: string | null
+          phone?: string | null
+          total_reviews?: number | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          average_rating?: number | null
+          coverage_areas?: string[] | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          established_year?: number | null
+          headquarters_location?: string | null
+          id?: string
+          is_active?: boolean
+          lender_type?: Database["public"]["Enums"]["lender_type"]
+          logo_url?: string | null
+          name?: string
+          nmls_id?: string | null
+          phone?: string | null
+          total_reviews?: number | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       lessons: {
         Row: {
           age_group: Database["public"]["Enums"]["age_group"]
@@ -425,6 +1172,325 @@ export type Database = {
           video_url?: string | null
         }
         Relationships: []
+      }
+      loan_products: {
+        Row: {
+          apr_range_high: number | null
+          apr_range_low: number | null
+          base_rate: number | null
+          created_at: string
+          estimated_closing_days: number | null
+          features: string[] | null
+          fees: Json | null
+          first_time_buyer_program: boolean | null
+          id: string
+          is_active: boolean
+          lender_id: string | null
+          low_income_program: boolean | null
+          max_credit_score: number | null
+          max_loan_amount: number | null
+          min_credit_score: number | null
+          min_down_payment_percent: number | null
+          min_loan_amount: number | null
+          product_name: string
+          product_type: Database["public"]["Enums"]["loan_product_type"]
+          updated_at: string
+          veteran_program: boolean | null
+        }
+        Insert: {
+          apr_range_high?: number | null
+          apr_range_low?: number | null
+          base_rate?: number | null
+          created_at?: string
+          estimated_closing_days?: number | null
+          features?: string[] | null
+          fees?: Json | null
+          first_time_buyer_program?: boolean | null
+          id?: string
+          is_active?: boolean
+          lender_id?: string | null
+          low_income_program?: boolean | null
+          max_credit_score?: number | null
+          max_loan_amount?: number | null
+          min_credit_score?: number | null
+          min_down_payment_percent?: number | null
+          min_loan_amount?: number | null
+          product_name: string
+          product_type: Database["public"]["Enums"]["loan_product_type"]
+          updated_at?: string
+          veteran_program?: boolean | null
+        }
+        Update: {
+          apr_range_high?: number | null
+          apr_range_low?: number | null
+          base_rate?: number | null
+          created_at?: string
+          estimated_closing_days?: number | null
+          features?: string[] | null
+          fees?: Json | null
+          first_time_buyer_program?: boolean | null
+          id?: string
+          is_active?: boolean
+          lender_id?: string | null
+          low_income_program?: boolean | null
+          max_credit_score?: number | null
+          max_loan_amount?: number | null
+          min_credit_score?: number | null
+          min_down_payment_percent?: number | null
+          min_loan_amount?: number | null
+          product_name?: string
+          product_type?: Database["public"]["Enums"]["loan_product_type"]
+          updated_at?: string
+          veteran_program?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_products_lender_id_fkey"
+            columns: ["lender_id"]
+            isOneToOne: false
+            referencedRelation: "lenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      network_analytics: {
+        Row: {
+          apprenticeship_progressions: number | null
+          business_startups: number | null
+          cic_application_id: string | null
+          cic_referrals_made: number | null
+          cic_referrals_received: number | null
+          cvs_created: number | null
+          cvs_updated: number | null
+          employment_placements: number | null
+          further_education_progressions: number | null
+          generated_at: string | null
+          id: string
+          interviews_completed: number | null
+          interviews_scheduled: number | null
+          job_applications: number | null
+          jumpstart_sync_status: string | null
+          reporting_period_end: string
+          reporting_period_start: string
+          retention_90_day: number | null
+          shared_employer_partnerships: number | null
+          total_participants: number | null
+        }
+        Insert: {
+          apprenticeship_progressions?: number | null
+          business_startups?: number | null
+          cic_application_id?: string | null
+          cic_referrals_made?: number | null
+          cic_referrals_received?: number | null
+          cvs_created?: number | null
+          cvs_updated?: number | null
+          employment_placements?: number | null
+          further_education_progressions?: number | null
+          generated_at?: string | null
+          id?: string
+          interviews_completed?: number | null
+          interviews_scheduled?: number | null
+          job_applications?: number | null
+          jumpstart_sync_status?: string | null
+          reporting_period_end: string
+          reporting_period_start: string
+          retention_90_day?: number | null
+          shared_employer_partnerships?: number | null
+          total_participants?: number | null
+        }
+        Update: {
+          apprenticeship_progressions?: number | null
+          business_startups?: number | null
+          cic_application_id?: string | null
+          cic_referrals_made?: number | null
+          cic_referrals_received?: number | null
+          cvs_created?: number | null
+          cvs_updated?: number | null
+          employment_placements?: number | null
+          further_education_progressions?: number | null
+          generated_at?: string | null
+          id?: string
+          interviews_completed?: number | null
+          interviews_scheduled?: number | null
+          job_applications?: number | null
+          jumpstart_sync_status?: string | null
+          reporting_period_end?: string
+          reporting_period_start?: string
+          retention_90_day?: number | null
+          shared_employer_partnerships?: number | null
+          total_participants?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_analytics_cic_application_id_fkey"
+            columns: ["cic_application_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      network_resources: {
+        Row: {
+          access_count: number | null
+          content_data: Json | null
+          contributing_cic_id: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          jumpstart_featured: boolean | null
+          network_wide: boolean | null
+          resource_type: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          access_count?: number | null
+          content_data?: Json | null
+          contributing_cic_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          jumpstart_featured?: boolean | null
+          network_wide?: boolean | null
+          resource_type: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          access_count?: number | null
+          content_data?: Json | null
+          contributing_cic_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          jumpstart_featured?: boolean | null
+          network_wide?: boolean | null
+          resource_type?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "network_resources_contributing_cic_id_fkey"
+            columns: ["contributing_cic_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participants: {
+        Row: {
+          cic_application_id: string | null
+          completion_date: string | null
+          created_at: string | null
+          date_of_birth: string | null
+          email: string | null
+          enrollment_date: string | null
+          first_name: string
+          id: string
+          jumpstart_user_id: string | null
+          last_name: string
+          phone: string | null
+          postcode: string | null
+          status: Database["public"]["Enums"]["participant_status"] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cic_application_id?: string | null
+          completion_date?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          enrollment_date?: string | null
+          first_name: string
+          id?: string
+          jumpstart_user_id?: string | null
+          last_name: string
+          phone?: string | null
+          postcode?: string | null
+          status?: Database["public"]["Enums"]["participant_status"] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cic_application_id?: string | null
+          completion_date?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          enrollment_date?: string | null
+          first_name?: string
+          id?: string
+          jumpstart_user_id?: string | null
+          last_name?: string
+          phone?: string | null
+          postcode?: string | null
+          status?: Database["public"]["Enums"]["participant_status"] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participants_cic_application_id_fkey"
+            columns: ["cic_application_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      peer_reviews: {
+        Row: {
+          created_at: string
+          feedback: string | null
+          grant_application_id: string
+          id: string
+          rating: number | null
+          review_data: Json | null
+          reviewer_id: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          feedback?: string | null
+          grant_application_id: string
+          id?: string
+          rating?: number | null
+          review_data?: Json | null
+          reviewer_id: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          feedback?: string | null
+          grant_application_id?: string
+          id?: string
+          rating?: number | null
+          review_data?: Json | null
+          reviewer_id?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "peer_reviews_grant_application_id_fkey"
+            columns: ["grant_application_id"]
+            isOneToOne: false
+            referencedRelation: "grant_applications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -518,6 +1584,395 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          action_type: string
+          attempt_count: number | null
+          blocked_until: string | null
+          created_at: string | null
+          id: string
+          identifier: string
+          updated_at: string | null
+          window_start: string | null
+        }
+        Insert: {
+          action_type: string
+          attempt_count?: number | null
+          blocked_until?: string | null
+          created_at?: string | null
+          id?: string
+          identifier: string
+          updated_at?: string | null
+          window_start?: string | null
+        }
+        Update: {
+          action_type?: string
+          attempt_count?: number | null
+          blocked_until?: string | null
+          created_at?: string | null
+          id?: string
+          identifier?: string
+          updated_at?: string | null
+          window_start?: string | null
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          from_cic_id: string | null
+          id: string
+          notes: string | null
+          participant_id: string | null
+          status: string | null
+          to_cic_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          from_cic_id?: string | null
+          id?: string
+          notes?: string | null
+          participant_id?: string | null
+          status?: string | null
+          to_cic_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          from_cic_id?: string | null
+          id?: string
+          notes?: string | null
+          participant_id?: string | null
+          status?: string | null
+          to_cic_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_from_cic_id_fkey"
+            columns: ["from_cic_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_to_cic_id_fkey"
+            columns: ["to_cic_id"]
+            isOneToOne: false
+            referencedRelation: "cic_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      response_templates: {
+        Row: {
+          created_at: string
+          id: string
+          question: string
+          template: string
+          template_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          question: string
+          template: string
+          template_type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          question?: string
+          template?: string
+          template_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      security_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          locked_until: string | null
+          login_attempts: number | null
+          password_changed_at: string | null
+          two_factor_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          locked_until?: string | null
+          login_attempts?: number | null
+          password_changed_at?: string | null
+          two_factor_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          locked_until?: string | null
+          login_attempts?: number | null
+          password_changed_at?: string | null
+          two_factor_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      shared_resources: {
+        Row: {
+          age_group_focus: string[] | null
+          category: string | null
+          content_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          download_count: number | null
+          file_path: string | null
+          id: string
+          is_public: boolean | null
+          resource_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          age_group_focus?: string[] | null
+          category?: string | null
+          content_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          download_count?: number | null
+          file_path?: string | null
+          id?: string
+          is_public?: boolean | null
+          resource_type: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          age_group_focus?: string[] | null
+          category?: string | null
+          content_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          download_count?: number | null
+          file_path?: string | null
+          id?: string
+          is_public?: boolean | null
+          resource_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_applications: {
+        Row: {
+          application_date: string | null
+          application_status: Database["public"]["Enums"]["application_status"]
+          callback_completed: boolean | null
+          callback_requested: boolean | null
+          created_at: string
+          id: string
+          lender_id: string | null
+          loan_amount: number | null
+          loan_product_id: string | null
+          notes: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          application_date?: string | null
+          application_status?: Database["public"]["Enums"]["application_status"]
+          callback_completed?: boolean | null
+          callback_requested?: boolean | null
+          created_at?: string
+          id?: string
+          lender_id?: string | null
+          loan_amount?: number | null
+          loan_product_id?: string | null
+          notes?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          application_date?: string | null
+          application_status?: Database["public"]["Enums"]["application_status"]
+          callback_completed?: boolean | null
+          callback_requested?: boolean | null
+          created_at?: string
+          id?: string
+          lender_id?: string | null
+          loan_amount?: number | null
+          loan_product_id?: string | null
+          notes?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_applications_lender_id_fkey"
+            columns: ["lender_id"]
+            isOneToOne: false
+            referencedRelation: "lenders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_applications_loan_product_id_fkey"
+            columns: ["loan_product_id"]
+            isOneToOne: false
+            referencedRelation: "loan_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_grant_answers: {
+        Row: {
+          answer: string | null
+          created_at: string | null
+          grant_id: string | null
+          id: string
+          question_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          answer?: string | null
+          created_at?: string | null
+          grant_id?: string | null
+          id?: string
+          question_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          answer?: string | null
+          created_at?: string | null
+          grant_id?: string | null
+          id?: string
+          question_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_grant_answers_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "grants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_lender_bookmarks: {
+        Row: {
+          created_at: string
+          id: string
+          lender_id: string | null
+          personal_notes: string | null
+          ranking: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lender_id?: string | null
+          personal_notes?: string | null
+          ranking?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lender_id?: string | null
+          personal_notes?: string | null
+          ranking?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_lender_bookmarks_lender_id_fkey"
+            columns: ["lender_id"]
+            isOneToOne: false
+            referencedRelation: "lenders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          created_at: string | null
+          cv_url: string | null
+          education: Json | null
+          email: string | null
+          experience: Json | null
+          full_name: string | null
+          id: string
+          linkedin_url: string | null
+          location: string | null
+          phone: string | null
+          skills: string[] | null
+          updated_at: string | null
+          user_id: string
+          weekly_goal: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          cv_url?: string | null
+          education?: Json | null
+          email?: string | null
+          experience?: Json | null
+          full_name?: string | null
+          id?: string
+          linkedin_url?: string | null
+          location?: string | null
+          phone?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          weekly_goal?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          cv_url?: string | null
+          education?: Json | null
+          email?: string | null
+          experience?: Json | null
+          full_name?: string | null
+          id?: string
+          linkedin_url?: string | null
+          location?: string | null
+          phone?: string | null
+          skills?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          weekly_goal?: number | null
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           attempts: number | null
@@ -604,15 +2059,214 @@ export type Database = {
         }
         Relationships: []
       }
+      user_saved_grants: {
+        Row: {
+          application_status: string | null
+          grant_id: string
+          id: string
+          match_score: number | null
+          notes: string | null
+          saved_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          application_status?: string | null
+          grant_id: string
+          id?: string
+          match_score?: number | null
+          notes?: string | null
+          saved_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          application_status?: string | null
+          grant_id?: string
+          id?: string
+          match_score?: number | null
+          notes?: string | null
+          saved_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_saved_grants_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "grants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_stats: {
+        Row: {
+          badges: string[] | null
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          level: number | null
+          longest_streak: number | null
+          total_applications: number | null
+          total_interviews: number | null
+          total_xp: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          badges?: string[] | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          level?: number | null
+          longest_streak?: number | null
+          total_applications?: number | null
+          total_interviews?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          badges?: string[] | null
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          level?: number | null
+          longest_streak?: number | null
+          total_applications?: number | null
+          total_interviews?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_goals: {
+        Row: {
+          applications_count: number | null
+          created_at: string | null
+          goal_count: number
+          id: string
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          applications_count?: number | null
+          created_at?: string | null
+          goal_count: number
+          id?: string
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          applications_count?: number | null
+          created_at?: string | null
+          goal_count?: number
+          id?: string
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_cic_kpis: {
+        Args: {
+          p_cic_application_id: string
+          p_start_date: string
+          p_end_date: string
+        }
+        Returns: {
+          total_participants: number
+          cvs_created: number
+          cvs_updated: number
+          job_applications: number
+          interviews_scheduled: number
+          interviews_completed: number
+          employment_placements: number
+          retention_90_day: number
+          apprenticeship_progressions: number
+          further_education_progressions: number
+          business_startups: number
+        }[]
+      }
+      calculate_grant_match_score: {
+        Args: { p_grant_id: string; p_cic_application_id: string }
+        Returns: number
+      }
+      get_user_cic_applications: {
+        Args: { p_user_id: string }
+        Returns: {
+          id: string
+          user_id: string
+          cic_name: string
+          cic_structure: string
+          community_purpose: string
+          mission_statement: string
+          target_age_ranges: string[]
+          employment_sectors: string[]
+          skills_programs: string[]
+          jumpstart_partnership_opted_in: boolean
+          jumpstart_directory_listing: boolean
+          jumpstart_cv_builder_access: boolean
+          safeguarding_policy_required: boolean
+          dbs_checks_required: boolean
+          youth_protection_measures: string[]
+          current_stage: string
+          completed_stages: string[]
+          progress_percentage: number
+          cic36_form_data: Json
+          youth_employment_template_data: Json
+          created_at: string
+          updated_at: string
+          submitted_at: string
+          status: string
+        }[]
+      }
+      get_user_grant_matches: {
+        Args: { p_user_id: string }
+        Returns: {
+          grant_id: string
+          title: string
+          description: string
+          funder_name: string
+          funding_amount_min: number
+          funding_amount_max: number
+          application_deadline: string
+          match_score: number
+          is_saved: boolean
+        }[]
+      }
+      log_audit_event: {
+        Args: {
+          p_user_id: string
+          p_action_type: string
+          p_table_name?: string
+          p_record_id?: string
+          p_old_values?: Json
+          p_new_values?: Json
+          p_ip_address?: string
+          p_user_agent?: string
+        }
+        Returns: undefined
+      }
+      submit_grant_application: {
+        Args: { p_grant_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       age_group: "adult" | "teen" | "child"
+      application_status:
+        | "pending"
+        | "submitted"
+        | "approved"
+        | "denied"
+        | "withdrawn"
       badge_type:
         | "streak"
         | "completion"
@@ -621,12 +2275,45 @@ export type Database = {
         | "fast_learner"
       completion_status: "not_started" | "in_progress" | "completed"
       difficulty_level: "beginner" | "intermediate" | "advanced" | "kids"
+      employment_type:
+        | "full_time"
+        | "part_time"
+        | "apprenticeship"
+        | "internship"
+        | "self_employed"
+        | "further_education"
+      interaction_type:
+        | "cv_created"
+        | "cv_updated"
+        | "job_application"
+        | "interview_scheduled"
+        | "interview_completed"
+        | "employment_placed"
+        | "retention_check"
+        | "progression_tracked"
+        | "referral_made"
       legal_category:
         | "corporate"
         | "criminal"
         | "financial"
         | "rights"
         | "general"
+      lender_type: "bank" | "credit_union" | "online" | "mortgage_company"
+      loan_product_type:
+        | "conventional"
+        | "fha"
+        | "va"
+        | "usda"
+        | "jumbo"
+        | "commercial"
+      participant_status:
+        | "enrolled"
+        | "active"
+        | "completed"
+        | "employed"
+        | "further_education"
+        | "business_start_up"
+        | "inactive"
       subscription_tier: "free" | "starter" | "growth" | "scale"
       user_role: "entrepreneur" | "advisor" | "affiliate" | "admin"
     }
@@ -757,6 +2444,13 @@ export const Constants = {
   public: {
     Enums: {
       age_group: ["adult", "teen", "child"],
+      application_status: [
+        "pending",
+        "submitted",
+        "approved",
+        "denied",
+        "withdrawn",
+      ],
       badge_type: [
         "streak",
         "completion",
@@ -766,12 +2460,49 @@ export const Constants = {
       ],
       completion_status: ["not_started", "in_progress", "completed"],
       difficulty_level: ["beginner", "intermediate", "advanced", "kids"],
+      employment_type: [
+        "full_time",
+        "part_time",
+        "apprenticeship",
+        "internship",
+        "self_employed",
+        "further_education",
+      ],
+      interaction_type: [
+        "cv_created",
+        "cv_updated",
+        "job_application",
+        "interview_scheduled",
+        "interview_completed",
+        "employment_placed",
+        "retention_check",
+        "progression_tracked",
+        "referral_made",
+      ],
       legal_category: [
         "corporate",
         "criminal",
         "financial",
         "rights",
         "general",
+      ],
+      lender_type: ["bank", "credit_union", "online", "mortgage_company"],
+      loan_product_type: [
+        "conventional",
+        "fha",
+        "va",
+        "usda",
+        "jumbo",
+        "commercial",
+      ],
+      participant_status: [
+        "enrolled",
+        "active",
+        "completed",
+        "employed",
+        "further_education",
+        "business_start_up",
+        "inactive",
       ],
       subscription_tier: ["free", "starter", "growth", "scale"],
       user_role: ["entrepreneur", "advisor", "affiliate", "admin"],

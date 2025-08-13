@@ -3,180 +3,208 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 };
+
+// Rate limiting map (in production, use Redis or similar)
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 10; // 10 requests per minute
+
+function checkRateLimit(identifier: string): boolean {
+  const now = Date.now();
+  const rateLimitData = rateLimitMap.get(identifier);
+  
+  if (!rateLimitData || now > rateLimitData.resetTime) {
+    rateLimitMap.set(identifier, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  
+  if (rateLimitData.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return false;
+  }
+  
+  rateLimitData.count++;
+  return true;
+}
+
+function validateInput(data: any): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (!data.companyName || typeof data.companyName !== 'string') {
+    errors.push('Company name is required and must be a string');
+  }
+  
+  if (data.companyName && data.companyName.length > 160) {
+    errors.push('Company name must be 160 characters or less');
+  }
+  
+  if (data.companyName && data.companyName.length < 2) {
+    errors.push('Company name must be at least 2 characters');
+  }
+  
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+async function logAuditEvent(supabase: any, userId: string, action: string, data: any) {
+  try {
+    await supabase.rpc('log_audit_event', {
+      p_user_id: userId,
+      p_action_type: action,
+      p_table_name: 'company_name_checks',
+      p_new_values: data
+    });
+  } catch (error) {
+    console.error('Failed to log audit event:', error);
+  }
+}
 
 serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    // Get API credentials from environment variables
-    const COMPANIES_HOUSE_API_KEY = Deno.env.get("COMPANIES_HOUSE_API_KEY");
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
-    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "";
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
+      }
+    );
 
-    if (!COMPANIES_HOUSE_API_KEY) {
+    // Get user from auth
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
+    if (userError || !user) {
       return new Response(
-        JSON.stringify({ error: "Companies House API key not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: 'Unauthorized' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
       );
     }
 
-    // Get the request data
-    const { action, data, userId } = await req.json();
-
-    // Create Supabase client with admin privileges for database operations
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
-    // Base64 encode the API key for Companies House auth
-    const authHeader = `Basic ${btoa(`${COMPANIES_HOUSE_API_KEY}:`)}`;
+    // Rate limiting check
+    const clientIP = req.headers.get('x-forwarded-for') || 'unknown';
+    const rateLimitKey = `${user.id}:${clientIP}`;
     
-    // Perform different actions based on the request
-    switch (action) {
-      case "company_name_availability": {
-        // Check if a company name is available
-        const { companyName } = data;
-        
-        const response = await fetch(
-          `https://api.company-information.service.gov.uk/company-name-availability?company_name=${encodeURIComponent(companyName)}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: authHeader,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-        
-        // Log the check in the database
-        await supabase.from("company_name_checks").insert({
-          user_id: userId,
-          company_name: companyName,
-          is_available: result.company_name_availability === "available",
-          response_data: result
-        });
-        
-        return new Response(
-          JSON.stringify(result),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      case "company_search": {
-        // Search for existing companies
-        const { query, items_per_page = 20, start_index = 0 } = data;
-        
-        const response = await fetch(
-          `https://api.company-information.service.gov.uk/search/companies?q=${encodeURIComponent(query)}&items_per_page=${items_per_page}&start_index=${start_index}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: authHeader,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-        
-        return new Response(
-          JSON.stringify(result),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      case "company_profile": {
-        // Get detailed company information
-        const { companyNumber } = data;
-        
-        const response = await fetch(
-          `https://api.company-information.service.gov.uk/company/${companyNumber}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: authHeader,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-        
-        return new Response(
-          JSON.stringify(result),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      case "officer_search": {
-        // Search for company officers/directors
-        const { query, items_per_page = 20, start_index = 0 } = data;
-        
-        const response = await fetch(
-          `https://api.company-information.service.gov.uk/search/officers?q=${encodeURIComponent(query)}&items_per_page=${items_per_page}&start_index=${start_index}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: authHeader,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-        
-        return new Response(
-          JSON.stringify(result),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      case "register_company": {
-        // This is a simplified placeholder - actual company registration requires
-        // submitting a complex set of data to Companies House Web Filing or XMLGW services
-        // Usually done through an approved formation agent
-        
-        const { companyData } = data;
-        
-        // Log the registration attempt
-        await supabase.from("company_registrations").insert({
-          user_id: userId,
-          company_name: companyData.company_name,
-          company_type: companyData.company_type,
-          registered_address: companyData.registered_address,
-          directors: companyData.directors,
-          shareholders: companyData.shareholders,
-          registration_status: "submitted"
-        });
-        
-        return new Response(
-          JSON.stringify({ 
-            status: "submitted",
-            message: "Company registration submitted. An agent will process your request." 
-          }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      default:
-        return new Response(
-          JSON.stringify({ error: "Invalid action" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+    if (!checkRateLimit(rateLimitKey)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
+
+    // Parse and validate request
+    const requestData = await req.json();
+    const validation = validateInput(requestData);
+    
+    if (!validation.isValid) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid input', details: validation.errors }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const { companyName } = requestData;
+    const companiesHouseApiKey = Deno.env.get('COMPANIES_HOUSE_API_KEY');
+
+    if (!companiesHouseApiKey) {
+      console.error('Companies House API key not configured');
+      return new Response(
+        JSON.stringify({ error: 'Service temporarily unavailable' }),
+        { 
+          status: 503, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Check company name availability
+    const searchUrl = `https://api.company-information.service.gov.uk/search/companies?q=${encodeURIComponent(companyName)}&items_per_page=1`;
+    
+    const response = await fetch(searchUrl, {
+      headers: {
+        'Authorization': `Basic ${btoa(companiesHouseApiKey + ':')}`,
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Companies House API error: ${response.status}`);
+    }
+
+    const searchResults = await response.json();
+    const isAvailable = searchResults.total_results === 0;
+
+    // Store the check result
+    const { error: insertError } = await supabaseClient
+      .from('company_name_checks')
+      .insert({
+        user_id: user.id,
+        company_name: companyName,
+        is_available: isAvailable,
+        response_data: {
+          total_results: searchResults.total_results,
+          search_query: companyName,
+          checked_at: new Date().toISOString()
+        }
+      });
+
+    if (insertError) {
+      console.error('Error storing company name check:', insertError);
+    }
+
+    // Log audit event
+    await logAuditEvent(supabaseClient, user.id, 'company_name_check', {
+      company_name: companyName,
+      is_available: isAvailable
+    });
+
+    return new Response(
+      JSON.stringify({
+        companyName,
+        isAvailable,
+        message: isAvailable 
+          ? 'Company name appears to be available'
+          : 'Company name is already in use or similar names exist',
+        totalResults: searchResults.total_results
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
+
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error('Error in companies-house function:', error);
     
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ 
+        error: 'Internal server error',
+        message: 'An unexpected error occurred. Please try again later.'
+      }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     );
   }
 });
