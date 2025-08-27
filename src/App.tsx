@@ -56,29 +56,29 @@ function App() {
                       </div>
                     </div>
                   }>
-                    <Routes>
-                      <Route path="/" element={<Layout />}>
-                        <Route index element={<Index />} />
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="wizard" element={<WizardPage />} />
-                        <Route path="pricing" element={<PricingPage />} />
-                        <Route path="auth" element={<AuthPage />} />
-                        <Route path="banking" element={<BankingPage />} />
-                        <Route path="credit-funding" element={<CreditFundingPage />} />
-                        <Route path="documents" element={<DocumentsPage />} />
-                        <Route path="compliance" element={<CompliancePage />} />
-                        <Route path="blog" element={<BlogPage />} />
-                        <Route path="blog/:slug" element={<BlogPostPage />} />
-                        <Route path="blog/tag/:tag" element={<BlogTagPage />} />
-                        <Route path="blog/author/:slug" element={<BlogAuthorPage />} />
-                        <Route path="learn" element={<LearnPage />} />
-                        <Route path="learn/:category/:slug" element={<LearnTutorialPage />} />
-                        <Route path="support" element={<SupportPage />} />
-                        <Route path="settings" element={<SettingsPage />} />
-                        <Route path="contact" element={<ContactPage />} />
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/wizard" element={<WizardPage />} />
+                        <Route path="/pricing" element={<PricingPage />} />
+                        <Route path="/auth" element={<AuthPage />} />
+                        <Route path="/banking" element={<BankingPage />} />
+                        <Route path="/credit-funding" element={<CreditFundingPage />} />
+                        <Route path="/documents" element={<DocumentsPage />} />
+                        <Route path="/compliance" element={<CompliancePage />} />
+                        <Route path="/blog" element={<BlogPage />} />
+                        <Route path="/blog/:slug" element={<BlogPostPage />} />
+                        <Route path="/blog/tag/:tag" element={<BlogTagPage />} />
+                        <Route path="/blog/author/:slug" element={<BlogAuthorPage />} />
+                        <Route path="/learn" element={<LearnPage />} />
+                        <Route path="/learn/:category/:slug" element={<LearnTutorialPage />} />
+                        <Route path="/support" element={<SupportPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/contact" element={<ContactPage />} />
                         <Route path="*" element={<NotFound />} />
-                      </Route>
-                    </Routes>
+                      </Routes>
+                    </Layout>
                   </Suspense>
                   <Toaster />
                 </div>
