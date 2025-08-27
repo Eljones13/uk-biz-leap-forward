@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle, RefreshCw, FileText } from "lucide-react";
-import { getDiagnosticsData } from "@/lib/content";
+import { loadBlogPosts, loadLearnTutorials } from "@/lib/mdxContent";
 
 const ContentCheck = () => {
   const [diagnostics, setDiagnostics] = useState<any>(null);
@@ -13,7 +13,39 @@ const ContentCheck = () => {
   const loadDiagnostics = async () => {
     setLoading(true);
     try {
-      const data = await getDiagnosticsData();
+      // Load content using the new loaders
+      const blogPosts = loadBlogPosts();
+      const learnTutorials = loadLearnTutorials();
+      
+      // Try to load the content index
+      let indexContent = [];
+      try {
+        const indexMod = await import("../content-index.json");
+        indexContent = indexMod.default || [];
+      } catch {
+        console.log('No content index found');
+      }
+
+      const data = {
+        glob: {
+          blog: blogPosts.length,
+          learn: learnTutorials.length,
+          paths: [
+            ...blogPosts.map(p => `blog/${p.slug}.mdx`),
+            ...learnTutorials.map(t => `learn/${t.slug}.mdx`)
+          ]
+        },
+        index: {
+          total: indexContent.length,
+          blog: indexContent.filter((item: any) => item.type === 'blog').length,
+          learn: indexContent.filter((item: any) => item.type === 'learn').length
+        },
+        fallback: {
+          blog: blogPosts.length,
+          learn: learnTutorials.length
+        }
+      };
+      
       setDiagnostics(data);
       
       // Log acceptance checklist
@@ -32,7 +64,6 @@ const ContentCheck = () => {
   const rebuildIndex = async () => {
     try {
       setLoading(true);
-      // Run the build script equivalent
       console.log('Rebuilding content index...');
       await loadDiagnostics();
     } catch (error) {
@@ -72,7 +103,7 @@ const ContentCheck = () => {
 
   const hasNoContent = diagnostics.glob.blog === 0 && diagnostics.glob.learn === 0;
   const needsReindex = diagnostics.glob.blog > diagnostics.index.blog || diagnostics.glob.learn > diagnostics.index.learn;
-  const isHealthy = !hasNoContent && !needsReindex && diagnostics.fallback.blog > 0 && diagnostics.fallback.learn > 0;
+  const isHealthy = !hasNoContent && diagnostics.fallback.blog > 0 && diagnostics.fallback.learn > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -184,7 +215,7 @@ const ContentCheck = () => {
               <ul className="space-y-1">
                 {diagnostics.glob.paths.map((path: string, index: number) => (
                   <li key={index} className="font-mono text-sm">
-                    {path.replace('/src/content/', '')}
+                    {path}
                   </li>
                 ))}
               </ul>

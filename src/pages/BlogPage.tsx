@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -6,57 +6,21 @@ import { Calendar, User, ArrowRight, Rss, ChevronLeft, ChevronRight } from "luci
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/seo/SEO";
 import { BlogSearch } from "@/components/blog/BlogSearch";
-import { loadContentIndex, loadBlogListFallback } from "@/lib/content";
-
-interface BlogPost {
-  type: string;
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  author: string;
-  tags: string[];
-  category?: string;
-}
+import { loadBlogPosts } from "@/lib/mdxContent";
 
 const POSTS_PER_PAGE = 10;
-const ALL = 'all';
+const ALL = 'All';
 
 const BlogPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(ALL);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchResults, setSearchResults] = useState<BlogPost[]>([]);
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
-  useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        let posts = await loadContentIndex();
-        posts = posts.filter((item: any) => item.type === 'blog');
-        
-        if (posts.length === 0) {
-          console.log('No posts in index, trying fallback...');
-          posts = await loadBlogListFallback();
-        }
-        
-        console.log(`Loaded ${posts.length} blog posts`);
-        setBlogPosts(posts);
-      } catch (error) {
-        console.error('Error loading blog posts:', error);
-        // Force fallback on error
-        const fallbackPosts = await loadBlogListFallback();
-        setBlogPosts(fallbackPosts);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Load posts directly from raw MDX
+  const blogPosts = loadBlogPosts();
 
-    loadPosts();
-  }, []);
-
-  const getCategory = (post: BlogPost) => {
+  const getCategory = (post: any) => {
     const c = post.category ?? 'Uncategorised';
     return (Array.isArray(c) ? c[0] : c).toString().trim();
   };
@@ -75,8 +39,8 @@ const BlogPage = () => {
     
     const selected = selectedCategory.toString().trim().toLowerCase();
     
-    // Category filtering - "all" shows everything
-    if (selected !== ALL) {
+    // Category filtering - "All" shows everything
+    if (selected !== ALL.toLowerCase()) {
       posts = posts.filter(post => {
         return getCategory(post).toLowerCase() === selected;
       });
@@ -121,19 +85,6 @@ const BlogPage = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container py-6 sm:py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading blog posts...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <SEO 
@@ -151,13 +102,6 @@ const BlogPage = () => {
             <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
               Expert insights, guides, and updates on UK business formation, compliance, and growth strategies.
             </p>
-            
-            {/* Debug info in development */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mb-4 p-2 bg-yellow-100 text-yellow-800 rounded text-sm">
-                Debug: Found {blogPosts.length} posts, filtered to {filteredPosts.length}
-              </div>
-            )}
             
             {/* RSS Link */}
             <Link to="/blog/rss.xml" className="inline-flex items-center gap-2 text-primary hover:underline mb-6 sm:mb-8">
@@ -246,7 +190,7 @@ const BlogPage = () => {
                       </CardHeader>
                       <CardContent>
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {post.tags?.map((tag) => (
+                          {post.tags?.map((tag: string) => (
                             <Badge
                               key={tag}
                               variant="outline"

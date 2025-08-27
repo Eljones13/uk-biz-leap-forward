@@ -1,5 +1,5 @@
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -8,19 +8,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Search, BookOpen, Clock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/seo/SEO";
-import { loadContentIndex, loadLearnListFallback } from "@/lib/content";
-
-interface LearnContent {
-  type: string;
-  slug: string;
-  category: string;
-  title: string;
-  description: string;
-  date: string;
-  lastUpdated?: string;
-  author: string;
-  tags: string[];
-}
+import { loadLearnTutorials } from "@/lib/mdxContent";
 
 const categories = [
   { id: "all", name: "All" },
@@ -35,42 +23,9 @@ const LearnPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedTag, setSelectedTag] = useState("");
-  const [learnContent, setLearnContent] = useState<LearnContent[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadContent = async () => {
-      try {
-        let content = await loadContentIndex();
-        content = content.filter((item: any) => item.type === 'learn');
-        
-        if (content.length === 0) {
-          content = await loadLearnListFallback();
-        }
-        
-        setLearnContent(content);
-        
-        // Auto-switch to first non-empty tab if "all" is empty
-        if (content.length === 0) {
-          const firstNonEmptyCategory = categories.find(cat => 
-            cat.id !== "all" && content.some((item: any) => item.category === cat.id)
-          );
-          if (firstNonEmptyCategory) {
-            setActiveCategory(firstNonEmptyCategory.id);
-          }
-        }
-      } catch (error) {
-        console.error('Error loading learn content:', error);
-        // Force fallback on error
-        const fallbackContent = await loadLearnListFallback();
-        setLearnContent(fallbackContent);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadContent();
-  }, []);
+  // Load tutorials directly from raw MDX
+  const learnContent = loadLearnTutorials();
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
@@ -89,8 +44,8 @@ const LearnPage = () => {
       
       return matchesSearch && matchesCategory && matchesTag;
     }).sort((a, b) => {
-      const dateA = new Date(a.lastUpdated || a.date).getTime();
-      const dateB = new Date(b.lastUpdated || b.date).getTime();
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
       return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
     });
   }, [searchTerm, activeCategory, selectedTag, learnContent]);
@@ -104,19 +59,6 @@ const LearnPage = () => {
       day: 'numeric'
     });
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="container py-6 sm:py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading tutorials...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -236,7 +178,7 @@ const LearnPage = () => {
                                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                   <Clock className="h-3 w-3" />
                                   <span className="hidden sm:inline">Updated </span>
-                                  <span>{formatDate(item.lastUpdated || item.date)}</span>
+                                  <span>{formatDate(item.date)}</span>
                                 </div>
                               </div>
                               <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
@@ -263,7 +205,7 @@ const LearnPage = () => {
                               </div>
                               <div className="flex items-center justify-between">
                                 <span className="text-sm text-muted-foreground">
-                                  By {item.author}
+                                  By BusinessBuilder Pro
                                 </span>
                                 <Link to={`/learn/${item.category}/${item.slug}`}>
                                   <ArrowRight className="h-4 w-4 text-primary hover:translate-x-1 transition-transform" />
