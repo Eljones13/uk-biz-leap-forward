@@ -1,27 +1,2 @@
 
-[
-  {
-    "type": "blog",
-    "slug": "register-limited-company",
-    "category": null,
-    "path": "/blog/register-limited-company",
-    "filePath": "content/blog/register-limited-company.mdx",
-    "title": "Step-by-Step Guide: How to Register a Limited Company in the UK",
-    "description": "Learn how to register a UK limited company with Companies House in 2025. Covers forms, fees, SIC codes, and the fastest way to incorporate.",
-    "date": "2025-08-27",
-    "author": "BusinessBuilder Pro",
-    "tags": ["company formation", "uk business", "companies house", "setup"]
-  },
-  {
-    "type": "learn",
-    "slug": "register-company",
-    "category": "company-formation",
-    "path": "/learn/company-formation/register-company",
-    "filePath": "content/learn/company-formation/register-company.mdx",
-    "title": "How to Use BusinessBuilder Pro to Register Your Company",
-    "description": "Quick start guide: register your UK company with BusinessBuilder Pro in just a few steps.",
-    "date": "2025-08-27",
-    "author": "BusinessBuilder Pro",
-    "tags": ["tutorial", "company formation", "how-to"]
-  }
-]
+[]
