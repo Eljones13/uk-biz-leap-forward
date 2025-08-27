@@ -8,43 +8,52 @@ async function buildContentIndex() {
   const contentIndex = [];
   const modules = {};
 
-  // Process blog posts
-  const blogFiles = await glob('content/blog/**/*.mdx');
-  for (const file of blogFiles) {
-    const content = await fs.readFile(file, 'utf8');
-    const { data: frontmatter } = matter(content);
-    const slug = path.basename(file, '.mdx');
-    
-    contentIndex.push({
-      type: 'blog',
-      slug,
-      category: null,
-      path: `/blog/${slug}`,
-      filePath: file,
-      ...frontmatter
-    });
+  // Ensure content directories exist
+  await fs.ensureDir('content/blog');
+  await fs.ensureDir('content/learn');
 
-    modules[`blog/${slug}`] = `() => import("../${file}")`;
-  }
+  try {
+    // Process blog posts
+    const blogFiles = await glob('content/blog/**/*.mdx');
+    for (const file of blogFiles) {
+      const content = await fs.readFile(file, 'utf8');
+      const { data: frontmatter } = matter(content);
+      const slug = path.basename(file, '.mdx');
+      
+      contentIndex.push({
+        type: 'blog',
+        slug,
+        category: null,
+        path: `/blog/${slug}`,
+        filePath: file,
+        ...frontmatter
+      });
 
-  // Process learn tutorials
-  const learnFiles = await glob('content/learn/**/*.mdx');
-  for (const file of learnFiles) {
-    const content = await fs.readFile(file, 'utf8');
-    const { data: frontmatter } = matter(content);
-    const slug = path.basename(file, '.mdx');
-    const category = path.dirname(file).split('/').pop();
-    
-    contentIndex.push({
-      type: 'learn',
-      slug,
-      category,
-      path: `/learn/${category}/${slug}`,
-      filePath: file,
-      ...frontmatter
-    });
+      modules[`blog/${slug}`] = `() => import("../${file}")`;
+    }
 
-    modules[`learn/${category}/${slug}`] = `() => import("../${file}")`;
+    // Process learn tutorials
+    const learnFiles = await glob('content/learn/**/*.mdx');
+    for (const file of learnFiles) {
+      const content = await fs.readFile(file, 'utf8');
+      const { data: frontmatter } = matter(content);
+      const slug = path.basename(file, '.mdx');
+      const category = path.dirname(file).split('/').pop();
+      
+      contentIndex.push({
+        type: 'learn',
+        slug,
+        category,
+        path: `/learn/${category}/${slug}`,
+        filePath: file,
+        ...frontmatter
+      });
+
+      modules[`learn/${category}/${slug}`] = `() => import("../${file}")`;
+    }
+  } catch (error) {
+    console.warn('Warning: Error processing content files:', error.message);
+    console.log('Continuing with empty content index...');
   }
 
   // Write content index
@@ -59,7 +68,10 @@ async function buildContentIndex() {
     .map(([key, importFn]) => `  "${key}": ${importFn}`)
     .join(',\n');
 
-  const moduleContent = `export const modules = {\n${moduleExports}\n};\n`;
+  const moduleContent = moduleExports 
+    ? `export const modules = {\n${moduleExports}\n};\n`
+    : `export const modules = {};\n`;
+    
   await fs.writeFile('src/content-modules.mjs', moduleContent);
 
   console.log(`Built content index: ${contentIndex.length} items`);

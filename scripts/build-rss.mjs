@@ -33,7 +33,7 @@ async function buildRSS() {
 
   await fs.ensureDir('public/blog');
   await fs.writeFile('public/blog/rss.xml', rss);
-  console.log('Built RSS feed');
+  console.log(`Built RSS feed with ${blogPosts.length} posts`);
 }
 
 buildRSS().catch(console.error);

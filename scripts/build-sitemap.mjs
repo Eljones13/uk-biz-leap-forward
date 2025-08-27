@@ -37,7 +37,7 @@ async function buildSitemap() {
 </urlset>`;
 
   await fs.writeFile('public/sitemap.xml', sitemap);
-  console.log('Built sitemap');
+  console.log(`Built sitemap with ${allRoutes.length} routes`);
 }
 
 buildSitemap().catch(console.error);
