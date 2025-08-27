@@ -59,7 +59,7 @@ const Index = () => {
       <section 
         className="relative py-20 px-4 min-h-[600px] lg:min-h-[700px] flex items-center"
         style={{
-          backgroundImage: "url('/lovable-uploads/a0f74d28-b829-433c-903d-1c2c8e45ef5e.png'), linear-gradient(to bottom, #F3F5F8, #F3F5F8)",
+          backgroundImage: "url('/lovable-uploads/ca434f50-9d29-4bd1-8080-b58abde982ec.png')",
           backgroundSize: "cover",
           backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",

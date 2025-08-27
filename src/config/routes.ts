@@ -16,6 +16,7 @@ export const routes: RouteConfig[] = [
   { name: "Documents", path: "/documents", showInNav: true, showInFooter: true, category: "Product", lastUpdated: "2024-01-15" },
   { name: "Compliance", path: "/compliance", showInNav: true, showInFooter: true, category: "Product", lastUpdated: "2024-01-15" },
   { name: "Pricing", path: "/pricing", showInNav: true, showInFooter: true, category: "Product", lastUpdated: "2024-01-15" },
+  { name: "Blog", path: "/blog", showInNav: true, showInFooter: true, category: "Resources", lastUpdated: "2024-01-15" },
   { name: "Learn", path: "/learn", showInNav: true, showInFooter: true, category: "Resources", lastUpdated: "2024-01-15" },
   { name: "Contact", path: "/contact", showInNav: true, showInFooter: true, category: "Company", lastUpdated: "2024-01-15" },
   

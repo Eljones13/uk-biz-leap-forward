@@ -15,6 +15,10 @@ import PricingPage from "./pages/PricingPage";
 import BankingPage from "./pages/BankingPage";
 import CreditFundingPage from "./pages/CreditFundingPage";
 import SitemapPage from "./pages/SitemapPage";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
+import LearnPage from "./pages/LearnPage";
+import LearnTutorialPage from "./pages/LearnTutorialPage";
 
 const queryClient = new QueryClient();
 
@@ -33,15 +37,6 @@ const SettingsPage = () => (
     <div className="max-w-2xl mx-auto text-center">
       <h1 className="text-3xl font-bold mb-4">Account Settings</h1>
       <p className="text-muted-foreground">Settings page coming soon...</p>
-    </div>
-  </div>
-);
-
-const LearnPage = () => (
-  <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div className="max-w-4xl mx-auto text-center">
-      <h1 className="text-3xl font-bold mb-4">Learn</h1>
-      <p className="text-muted-foreground">Learning resources coming soon...</p>
     </div>
   </div>
 );
@@ -73,7 +68,10 @@ const App = () => (
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/banking/*" element={<BankingPage />} />
             <Route path="/credit-funding/*" element={<CreditFundingPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/learn" element={<LearnPage />} />
+            <Route path="/learn/:category/:slug" element={<LearnTutorialPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/sitemap" element={<SitemapPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
