@@ -1,4 +1,5 @@
 
+import "./App.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,48 +11,32 @@ import { Layout } from "@/components/layout/Layout";
 import { mdxComponents } from "@/components/mdx/MDXComponents";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
-import NotFound from "./pages/NotFound";
 import WizardPage from "./pages/WizardPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import CompliancePage from "./pages/CompliancePage";
 import PricingPage from "./pages/PricingPage";
+import SupportPage from "./pages/SupportPage";
+import SettingsPage from "./pages/SettingsPage";
 import BankingPage from "./pages/BankingPage";
 import CreditFundingPage from "./pages/CreditFundingPage";
-import SitemapPage from "./pages/SitemapPage";
 import BlogPage from "./pages/BlogPage";
 import BlogPostPage from "./pages/BlogPostPage";
+import BlogTagPage from "./pages/BlogTagPage";
+import BlogAuthorPage from "./pages/BlogAuthorPage";
 import LearnPage from "./pages/LearnPage";
 import LearnTutorialPage from "./pages/LearnTutorialPage";
+import ContactPage from "./pages/ContactPage";
+import SitemapPage from "./pages/SitemapPage";
+import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
-
-// Placeholder components for remaining missing routes
-const SupportPage = () => (
-  <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div className="max-w-2xl mx-auto text-center">
-      <h1 className="text-3xl font-bold mb-4">Help & Support</h1>
-      <p className="text-muted-foreground">Support center coming soon...</p>
-    </div>
-  </div>
-);
-
-const SettingsPage = () => (
-  <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div className="max-w-2xl mx-auto text-center">
-      <h1 className="text-3xl font-bold mb-4">Account Settings</h1>
-      <p className="text-muted-foreground">Settings page coming soon...</p>
-    </div>
-  </div>
-);
-
-const ContactPage = () => (
-  <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div className="max-w-2xl mx-auto text-center">
-      <h1 className="text-3xl font-bold mb-4">Contact Us</h1>
-      <p className="text-muted-foreground">Contact page coming soon...</p>
-    </div>
-  </div>
-);
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -74,6 +59,8 @@ const App = () => (
                 <Route path="/banking/*" element={<BankingPage />} />
                 <Route path="/credit-funding/*" element={<CreditFundingPage />} />
                 <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/tag/:tag" element={<BlogTagPage />} />
+                <Route path="/blog/author/:slug" element={<BlogAuthorPage />} />
                 <Route path="/blog/:slug" element={<BlogPostPage />} />
                 <Route path="/learn" element={<LearnPage />} />
                 <Route path="/learn/:category/:slug" element={<LearnTutorialPage />} />

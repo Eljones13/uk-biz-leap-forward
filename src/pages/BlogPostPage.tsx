@@ -6,6 +6,9 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Calendar, User, ArrowLeft, Share2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { SEO } from "@/components/seo/SEO";
+import { NewsletterSignup } from "@/components/mdx/NewsletterSignup";
+import { AuthorCard } from "@/components/blog/AuthorCard";
+import { useAuthor } from "@/hooks/useAuthors";
 // @ts-ignore
 import contentIndex from "@/content-index.json";
 // @ts-ignore
@@ -16,6 +19,7 @@ const BlogPostPage = () => {
   const [post, setPost] = useState<any>(null);
   const [MDXContent, setMDXContent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { data: author } = useAuthor('businessbuilder-pro');
 
   useEffect(() => {
     const loadPost = async () => {
@@ -82,6 +86,49 @@ const BlogPostPage = () => {
     });
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.description,
+    "author": {
+      "@type": "Person",
+      "name": post.author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "BusinessBuilder Pro"
+    },
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "url": `https://businessbuilder.pro/blog/${post.slug}`
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://businessbuilder.pro/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://businessbuilder.pro/blog"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": `https://businessbuilder.pro/blog/${post.slug}`
+      }
+    ]
+  };
+
   return (
     <>
       <SEO 
@@ -91,6 +138,7 @@ const BlogPostPage = () => {
         url={`/blog/${post.slug}`}
         date={post.date}
         author={post.author}
+        jsonLd={[jsonLd, breadcrumbJsonLd]}
       />
       
       <div className="min-h-screen bg-background">
@@ -129,7 +177,9 @@ const BlogPostPage = () => {
               <div className="flex flex-wrap gap-2 mb-4">
                 {post.tags?.map((tag: string) => (
                   <Badge key={tag} variant="secondary">
-                    {tag}
+                    <Link to={`/blog/tag/${encodeURIComponent(tag)}`}>
+                      {tag}
+                    </Link>
                   </Badge>
                 ))}
               </div>
@@ -144,7 +194,9 @@ const BlogPostPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
-                  <span>{post.author}</span>
+                  <Link to="/blog/author/businessbuilder-pro" className="hover:text-primary">
+                    {post.author}
+                  </Link>
                 </div>
                 <Button variant="outline" size="sm">
                   <Share2 className="mr-2 h-4 w-4" />
@@ -157,6 +209,17 @@ const BlogPostPage = () => {
             <div className="prose prose-lg max-w-none">
               {MDXContent && <MDXContent />}
             </div>
+
+            {/* Newsletter Signup */}
+            <NewsletterSignup />
+
+            {/* Author Card */}
+            {author && (
+              <div className="mt-8">
+                <h3 className="text-xl font-semibold mb-4">About the Author</h3>
+                <AuthorCard author={author} variant="full" />
+              </div>
+            )}
 
             {/* CTA Section */}
             <div className="mt-12 p-6 bg-muted/50 rounded-2xl text-center">

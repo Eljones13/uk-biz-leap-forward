@@ -1,5 +1,9 @@
 
 import { Badge } from "@/components/ui/badge";
+import { Callout } from "./Callout";
+import { ProsCons } from "./ProsCons";
+import { Step } from "./Step";
+import { CTA } from "./CTA";
 
 export const mdxComponents = {
   h1: ({ children, ...props }: any) => (
@@ -64,4 +68,9 @@ export const mdxComponents = {
       {children}
     </blockquote>
   ),
+  // Custom MDX components
+  Callout,
+  ProsCons,
+  Step,
+  CTA,
 };

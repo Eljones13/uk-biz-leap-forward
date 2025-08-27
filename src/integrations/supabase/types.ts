@@ -44,6 +44,39 @@ export type Database = {
         }
         Relationships: []
       }
+      authors: {
+        Row: {
+          avatar: string | null
+          bio: string | null
+          created_at: string
+          id: string
+          name: string
+          role: string | null
+          slug: string
+          social: Json | null
+        }
+        Insert: {
+          avatar?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          role?: string | null
+          slug: string
+          social?: Json | null
+        }
+        Update: {
+          avatar?: string | null
+          bio?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          role?: string | null
+          slug?: string
+          social?: Json | null
+        }
+        Relationships: []
+      }
       company_registrations: {
         Row: {
           company_name: string
@@ -152,6 +185,24 @@ export type Database = {
           status?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      newsletter_signups: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
         }
         Relationships: []
       }

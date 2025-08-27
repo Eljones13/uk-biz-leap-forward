@@ -91,6 +91,55 @@ const LearnTutorialPage = () => {
     });
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": tutorial.title,
+    "description": tutorial.description,
+    "author": {
+      "@type": "Person",
+      "name": tutorial.author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "BusinessBuilder Pro"
+    },
+    "datePublished": tutorial.date,
+    "dateModified": tutorial.date,
+    "url": `https://businessbuilder.pro/learn/${tutorial.category}/${tutorial.slug}`
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://businessbuilder.pro/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Learn",
+        "item": "https://businessbuilder.pro/learn"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": categoryNames[category as keyof typeof categoryNames],
+        "item": `https://businessbuilder.pro/learn#${category}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": tutorial.title,
+        "item": `https://businessbuilder.pro/learn/${tutorial.category}/${tutorial.slug}`
+      }
+    ]
+  };
+
   return (
     <>
       <SEO 
@@ -100,6 +149,7 @@ const LearnTutorialPage = () => {
         url={`/learn/${tutorial.category}/${tutorial.slug}`}
         date={tutorial.date}
         author={tutorial.author}
+        jsonLd={[jsonLd, breadcrumbJsonLd]}
       />
       
       <div className="min-h-screen bg-background">
@@ -160,7 +210,7 @@ const LearnTutorialPage = () => {
                   <User className="h-4 w-4" />
                   <span>{tutorial.author}</span>
                 </div>
-                <span>Updated {formatDate(tutorial.date)}</span>
+                <span>Last updated {formatDate(tutorial.date)}</span>
               </div>
             </div>
 

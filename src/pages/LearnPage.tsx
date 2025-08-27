@@ -33,8 +33,15 @@ const categories = [
 const LearnPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("company-formation");
+  const [selectedTag, setSelectedTag] = useState("");
 
   const learnContent = contentIndex.filter((item: any) => item.type === 'learn') as LearnContent[];
+
+  const allTags = useMemo(() => {
+    const tags = new Set<string>();
+    learnContent.forEach(item => item.tags?.forEach(tag => tags.add(tag)));
+    return Array.from(tags).sort();
+  }, [learnContent]);
 
   const filteredContent = useMemo(() => {
     return learnContent.filter(item => {
@@ -43,10 +50,11 @@ const LearnPage = () => {
         item.description.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchesCategory = activeCategory === "" || item.category === activeCategory;
+      const matchesTag = selectedTag === "" || item.tags?.includes(selectedTag);
       
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesTag;
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [searchTerm, activeCategory, learnContent]);
+  }, [searchTerm, activeCategory, selectedTag, learnContent]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -91,16 +99,36 @@ const LearnPage = () => {
               Comprehensive guides and tutorials to help you navigate UK business formation, compliance, and growth.
             </p>
             
-            {/* Search */}
-            <div className="relative max-w-md mx-auto">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search tutorials..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+            {/* Search and Filters */}
+            <div className="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto mb-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Search tutorials..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <select
+                value={selectedTag}
+                onChange={(e) => setSelectedTag(e.target.value)}
+                className="px-4 py-2 rounded-md border border-input bg-background text-foreground"
+              >
+                <option value="">All Tags</option>
+                {allTags.map(tag => (
+                  <option key={tag} value={tag}>{tag}</option>
+                ))}
+              </select>
             </div>
+            
+            {(searchTerm || selectedTag) && (
+              <p className="text-sm text-muted-foreground">
+                Showing {filteredContent.length} result{filteredContent.length !== 1 ? 's' : ''}
+                {searchTerm && ` for "${searchTerm}"`}
+                {selectedTag && ` tagged "${selectedTag}"`}
+              </p>
+            )}
           </div>
         </section>
 
@@ -127,7 +155,7 @@ const LearnPage = () => {
 
                   {filteredContent.length === 0 ? (
                     <div className="text-center py-12">
-                      <p className="text-muted-foreground text-lg">No tutorials found matching your search.</p>
+                      <p className="text-muted-foreground text-lg">No tutorials found matching your criteria.</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -137,7 +165,7 @@ const LearnPage = () => {
                             <div className="flex items-center justify-between mb-2">
                               <Badge variant="outline">{category.name}</Badge>
                               <span className="text-sm text-muted-foreground">
-                                {formatDate(item.date)}
+                                Updated {formatDate(item.date)}
                               </span>
                             </div>
                             <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
@@ -152,7 +180,12 @@ const LearnPage = () => {
                           <CardContent>
                             <div className="flex flex-wrap gap-2 mb-4">
                               {item.tags?.map((tag) => (
-                                <Badge key={tag} variant="secondary" className="text-xs">
+                                <Badge 
+                                  key={tag} 
+                                  variant="secondary" 
+                                  className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                                  onClick={() => setSelectedTag(tag)}
+                                >
                                   {tag}
                                 </Badge>
                               ))}
