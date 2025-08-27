@@ -1,5 +1,4 @@
-
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -8,8 +7,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Search, BookOpen, Clock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/seo/SEO";
-// @ts-ignore
-import contentIndex from "@/content-index.json";
+import { loadContentIndex, loadLearnListFallback } from "@/lib/content";
 
 interface LearnContent {
   type: string;
@@ -35,8 +33,30 @@ const LearnPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("company-formation");
   const [selectedTag, setSelectedTag] = useState("");
+  const [learnContent, setLearnContent] = useState<LearnContent[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const learnContent = contentIndex.filter((item: any) => item.type === 'learn') as LearnContent[];
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        let content = await loadContentIndex();
+        content = content.filter((item: any) => item.type === 'learn');
+        
+        if (content.length === 0) {
+          content = await loadLearnListFallback();
+        }
+        
+        setLearnContent(content);
+      } catch (error) {
+        console.error('Error loading learn content:', error);
+        setLearnContent([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadContent();
+  }, []);
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
@@ -65,6 +85,19 @@ const LearnPage = () => {
     });
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container py-6 sm:py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading tutorials...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <SEO 
@@ -92,11 +125,11 @@ const LearnPage = () => {
         </div>
 
         {/* Header Section */}
-        <section className="py-16 px-4">
+        <section className="py-12 sm:py-16 px-4">
           <div className="container mx-auto max-w-4xl text-center">
-            <BookOpen className="h-12 w-12 text-primary mx-auto mb-4" />
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Learn Hub</h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <BookOpen className="h-10 w-10 sm:h-12 sm:w-12 text-primary mx-auto mb-4" />
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">Learn Hub</h1>
+            <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
               Comprehensive guides and tutorials to help you navigate UK business formation, compliance, and growth.
             </p>
             
@@ -108,13 +141,13 @@ const LearnPage = () => {
                   placeholder="Search tutorials..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 min-h-[44px] text-base"
                 />
               </div>
               <select
                 value={selectedTag}
                 onChange={(e) => setSelectedTag(e.target.value)}
-                className="px-4 py-2 rounded-md border border-input bg-background text-foreground"
+                className="px-4 py-2 rounded-md border border-input bg-background text-foreground min-h-[44px]"
               >
                 <option value="">All Tags</option>
                 {allTags.map(tag => (
@@ -134,10 +167,10 @@ const LearnPage = () => {
         </section>
 
         {/* Content Tabs */}
-        <section className="py-8 px-4">
+        <section className="py-6 sm:py-8 px-4">
           <div className="container mx-auto max-w-6xl">
             <Tabs value={activeCategory} onValueChange={setActiveCategory}>
-              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 mb-8">
+              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 mb-6 sm:mb-8">
                 {categories.map((category) => (
                   <TabsTrigger key={category.id} value={category.id} className="text-xs sm:text-sm">
                     {category.name}
@@ -148,7 +181,7 @@ const LearnPage = () => {
               {categories.map((category) => (
                 <TabsContent key={category.id} value={category.id}>
                   <div className="mb-6">
-                    <h2 className="text-2xl font-bold mb-2">{category.name}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold mb-2">{category.name}</h2>
                     <p className="text-muted-foreground">
                       {filteredContent.length} tutorial{filteredContent.length !== 1 ? 's' : ''} available
                     </p>
@@ -172,7 +205,8 @@ const LearnPage = () => {
                               <Badge variant="outline">{category.name}</Badge>
                               <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                 <Clock className="h-3 w-3" />
-                                <span>Updated {formatDate(item.lastUpdated || item.date)}</span>
+                                <span className="hidden sm:inline">Updated </span>
+                                <span>{formatDate(item.lastUpdated || item.date)}</span>
                               </div>
                             </div>
                             <CardTitle className="line-clamp-2 hover:text-primary transition-colors">

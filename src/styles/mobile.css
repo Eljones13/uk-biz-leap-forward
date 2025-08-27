@@ -1,0 +1,37 @@
+
+/* Mobile-first responsive design utilities */
+html, body { 
+  overflow-x: hidden; 
+}
+
+img, svg, video { 
+  max-width: 100%; 
+  height: auto; 
+}
+
+.prose img { 
+  border-radius: 0.5rem; 
+}
+
+.container { 
+  max-width: 80rem; 
+  margin: 0 auto; 
+  padding: 0 1rem; 
+}
+
+/* Mobile touch targets */
+@media (max-width: 768px) {
+  button, 
+  a[role="button"], 
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent zoom on form inputs */
+  input, 
+  textarea, 
+  select {
+    font-size: 16px;
+  }
+}

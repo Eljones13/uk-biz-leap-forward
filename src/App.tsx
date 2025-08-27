@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
-import { Layout } from "./components/layout/Layout";
+import Layout from "./components/layout/Layout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { SecureMDXProvider } from "./components/mdx/SecureMDXProvider";
 
@@ -56,29 +56,29 @@ function App() {
                       </div>
                     </div>
                   }>
-                    <Layout>
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/wizard" element={<WizardPage />} />
-                        <Route path="/pricing" element={<PricingPage />} />
-                        <Route path="/auth" element={<AuthPage />} />
-                        <Route path="/banking" element={<BankingPage />} />
-                        <Route path="/credit-funding" element={<CreditFundingPage />} />
-                        <Route path="/documents" element={<DocumentsPage />} />
-                        <Route path="/compliance" element={<CompliancePage />} />
-                        <Route path="/blog" element={<BlogPage />} />
-                        <Route path="/blog/:slug" element={<BlogPostPage />} />
-                        <Route path="/blog/tag/:tag" element={<BlogTagPage />} />
-                        <Route path="/blog/author/:slug" element={<BlogAuthorPage />} />
-                        <Route path="/learn" element={<LearnPage />} />
-                        <Route path="/learn/:category/:slug" element={<LearnTutorialPage />} />
-                        <Route path="/support" element={<SupportPage />} />
-                        <Route path="/settings" element={<SettingsPage />} />
-                        <Route path="/contact" element={<ContactPage />} />
+                    <Routes>
+                      <Route path="/" element={<Layout />}>
+                        <Route index element={<Index />} />
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="wizard" element={<WizardPage />} />
+                        <Route path="pricing" element={<PricingPage />} />
+                        <Route path="auth" element={<AuthPage />} />
+                        <Route path="banking" element={<BankingPage />} />
+                        <Route path="credit-funding" element={<CreditFundingPage />} />
+                        <Route path="documents" element={<DocumentsPage />} />
+                        <Route path="compliance" element={<CompliancePage />} />
+                        <Route path="blog" element={<BlogPage />} />
+                        <Route path="blog/:slug" element={<BlogPostPage />} />
+                        <Route path="blog/tag/:tag" element={<BlogTagPage />} />
+                        <Route path="blog/author/:slug" element={<BlogAuthorPage />} />
+                        <Route path="learn" element={<LearnPage />} />
+                        <Route path="learn/:category/:slug" element={<LearnTutorialPage />} />
+                        <Route path="support" element={<SupportPage />} />
+                        <Route path="settings" element={<SettingsPage />} />
+                        <Route path="contact" element={<ContactPage />} />
                         <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Layout>
+                      </Route>
+                    </Routes>
                   </Suspense>
                   <Toaster />
                 </div>
