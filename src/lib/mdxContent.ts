@@ -40,6 +40,7 @@ export function loadBlogPosts() {
     // safe fallbacks if frontmatter is missing
     const fallbackTitle = slug.split('/').pop()!.replace(/[-_]/g, ' ');
     return {
+      type: 'blog' as const,
       slug,
       title: fm.title || fallbackTitle,
       description: fm.description || '',
@@ -47,6 +48,9 @@ export function loadBlogPosts() {
       author: fm.author || 'BusinessBuilder Pro',
       category: fm.category || fm.categories || 'Uncategorised',
       tags: fm.tags || [],
+      path: `/blog/${slug}`,
+      filePath: path,
+      excerpt: fm.description || ''
     };
   });
   items.sort((a,b) => toTime(b.date) - toTime(a.date));
@@ -63,12 +67,18 @@ export function loadLearnTutorials() {
     const leaf = (rest.length ? rest.join('/') : category).split('/').pop()!;
     const fallbackTitle = leaf.replace(/[-_]/g, ' ');
     return {
+      type: 'learn' as const,
       category: category || 'general-support',
       slug,
       title: fm.title || fallbackTitle,
       description: fm.description || '',
       date: fm.date || '',
       tags: fm.tags || [],
+      path: `/learn/${category}/${slug}`,
+      filePath: path,
+      excerpt: fm.description || '',
+      lastUpdated: fm.lastUpdated || fm.date || '',
+      author: fm.author || 'BusinessBuilder Pro'
     };
   });
   items.sort((a,b) => toTime(b.date) - toTime(a.date));
