@@ -159,14 +159,18 @@ export const EnhancedBankAccountComparison = () => {
 
   const handleAffiliateClick = async (bank: BankAccount) => {
     try {
-      // Log the affiliate click
+      // Log the affiliate click in audit_logs table
       const { error } = await supabase
-        .from('affiliate_clicks')
+        .from('audit_logs')
         .insert({
-          user_id: user?.id,
-          bank_name: bank.bank,
-          affiliate_link: bank.affiliateLink,
-          ip_address: null, // Will be populated by trigger if needed
+          user_id: user?.id || null,
+          event_type: 'affiliate_click',
+          event_data: {
+            bank_name: bank.bank,
+            affiliate_link: bank.affiliateLink,
+            commission_rate: bank.commissionRate,
+            clicked_at: new Date().toISOString()
+          },
           user_agent: navigator.userAgent
         });
 

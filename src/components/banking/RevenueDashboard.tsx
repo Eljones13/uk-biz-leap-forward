@@ -25,10 +25,12 @@ export const RevenueDashboard = () => {
 
   const fetchClickStats = async () => {
     try {
+      // Fetch affiliate clicks from audit_logs where event_type = 'affiliate_click'
       const { data, error } = await supabase
-        .from('affiliate_clicks')
-        .select('bank_name, clicked_at')
-        .order('clicked_at', { ascending: false });
+        .from('audit_logs')
+        .select('event_data, created_at')
+        .eq('event_type', 'affiliate_click')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -46,12 +48,17 @@ export const RevenueDashboard = () => {
       };
 
       data?.forEach(click => {
-        const current = bankStats.get(click.bank_name) || { count: 0, lastClick: click.clicked_at, revenue: 0 };
-        bankStats.set(click.bank_name, {
-          count: current.count + 1,
-          lastClick: current.lastClick > click.clicked_at ? current.lastClick : click.clicked_at,
-          revenue: current.revenue + (commissionRates[click.bank_name] || 0)
-        });
+        const eventData = click.event_data as any;
+        const bankName = eventData?.bank_name;
+        
+        if (bankName) {
+          const current = bankStats.get(bankName) || { count: 0, lastClick: click.created_at, revenue: 0 };
+          bankStats.set(bankName, {
+            count: current.count + 1,
+            lastClick: current.lastClick > click.created_at ? current.lastClick : click.created_at,
+            revenue: current.revenue + (commissionRates[bankName] || 0)
+          });
+        }
       });
 
       const statsArray = Array.from(bankStats.entries()).map(([bank, stats]) => ({
@@ -136,7 +143,7 @@ export const RevenueDashboard = () => {
           <div className="space-y-4">
             {clickStats.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-8">
-                No affiliate clicks yet
+                No affiliate clicks yet. Try clicking "Apply Now" on any bank above!
               </p>
             ) : (
               clickStats.map((stat, index) => (

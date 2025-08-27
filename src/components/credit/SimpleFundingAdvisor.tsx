@@ -1,12 +1,10 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, Clock, AlertTriangle, Brain, Target } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 
 interface BusinessProfile {
   companyAgeMonths: number;
@@ -22,7 +20,6 @@ interface AdvisorSession {
 }
 
 export const SimpleFundingAdvisor = () => {
-  const { user } = useAuth();
   const [profile, setProfile] = useState<BusinessProfile>({
     companyAgeMonths: 0,
     hasBankAccount: false,
@@ -31,12 +28,6 @@ export const SimpleFundingAdvisor = () => {
   });
   const [session, setSession] = useState<AdvisorSession | null>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      loadSession();
-    }
-  }, [user]);
 
   const calculateReadinessScore = (profile: BusinessProfile): number => {
     let score = 0;
@@ -80,8 +71,11 @@ export const SimpleFundingAdvisor = () => {
     
     if (score >= 70) {
       recommendations.push("You're ready to start applying for business credit cards");
+      recommendations.push("Consider applying to Starling Bank or Tide for your first business credit card");
     } else if (score >= 50) {
       recommendations.push("Consider waiting 1-2 more months to strengthen your profile");
+    } else {
+      recommendations.push("Focus on building your business foundations first before applying for credit");
     }
     
     return recommendations;
@@ -118,6 +112,9 @@ export const SimpleFundingAdvisor = () => {
   const analyzeProfile = async () => {
     setLoading(true);
     
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
     const score = calculateReadinessScore(profile);
     const recommendations = generateRecommendations(profile, score);
     const checklist = generateChecklist(profile);
@@ -129,59 +126,7 @@ export const SimpleFundingAdvisor = () => {
     };
     
     setSession(newSession);
-    
-    // Save session to database
-    if (user) {
-      try {
-        const { error } = await supabase
-          .from('ai_advisor_sessions')
-          .upsert({
-            user_id: user.id,
-            session_data: profile,
-            readiness_score: score,
-            recommendations: recommendations,
-            updated_at: new Date().toISOString()
-          });
-          
-        if (error) {
-          console.error('Error saving session:', error);
-        }
-      } catch (error) {
-        console.error('Error saving session:', error);
-      }
-    }
-    
     setLoading(false);
-  };
-
-  const loadSession = async () => {
-    if (!user) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('ai_advisor_sessions')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-        
-      if (error) {
-        console.error('Error loading session:', error);
-        return;
-      }
-      
-      if (data) {
-        setProfile(data.session_data as BusinessProfile);
-        setSession({
-          readinessScore: data.readiness_score || 0,
-          recommendations: data.recommendations || [],
-          checklist: generateChecklist(data.session_data as BusinessProfile)
-        });
-      }
-    } catch (error) {
-      console.error('Error loading session:', error);
-    }
   };
 
   const getScoreColor = (score: number) => {
@@ -204,6 +149,9 @@ export const SimpleFundingAdvisor = () => {
             <Brain className="h-5 w-5 mr-2" />
             Simple Funding Readiness Check
           </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Get instant feedback on your business credit readiness with our rule-based assessment
+          </p>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
@@ -211,7 +159,7 @@ export const SimpleFundingAdvisor = () => {
               <label className="text-sm font-medium">Company Age (months)</label>
               <input
                 type="number"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 value={profile.companyAgeMonths}
                 onChange={(e) => setProfile({ ...profile, companyAgeMonths: parseInt(e.target.value) || 0 })}
                 placeholder="e.g., 6"
@@ -222,7 +170,7 @@ export const SimpleFundingAdvisor = () => {
               <label className="text-sm font-medium">Monthly Revenue (£)</label>
               <input
                 type="number"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                className="mt-1 block w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 value={profile.monthlyRevenue}
                 onChange={(e) => setProfile({ ...profile, monthlyRevenue: parseInt(e.target.value) || 0 })}
                 placeholder="e.g., 5000"
@@ -231,7 +179,7 @@ export const SimpleFundingAdvisor = () => {
           </div>
           
           <div className="space-y-3">
-            <label className="flex items-center space-x-2">
+            <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={profile.hasBankAccount}
@@ -241,7 +189,7 @@ export const SimpleFundingAdvisor = () => {
               <span className="text-sm">I have a business bank account open</span>
             </label>
             
-            <label className="flex items-center space-x-2">
+            <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={profile.hasCleanStatements}
@@ -302,6 +250,9 @@ export const SimpleFundingAdvisor = () => {
           <Card>
             <CardHeader>
               <CardTitle>Credit Building Checklist</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Follow this step-by-step roadmap to build business credit in the UK
+              </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
