@@ -6,9 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Brain, TrendingUp, Target, AlertCircle, CheckCircle } from "lucide-react";
+import { Brain, TrendingUp, Target, CheckCircle } from "lucide-react";
 
 const AIBusinessAdvisor = () => {
   const { user } = useAuth();
@@ -38,15 +37,8 @@ const AIBusinessAdvisor = () => {
         opportunities: identifyOpportunities()
       };
 
-      // Save to database
-      await supabase.from("ai_advisor_sessions").insert({
-        user_id: user.id,
-        session_type: "business_analysis",
-        input_data: businessData,
-        ai_response: aiResponse,
-        recommendations: aiResponse.nextSteps,
-        status: "completed"
-      });
+      // For now, just store locally - we can add a proper AI sessions table later
+      console.log("AI Analysis completed:", aiResponse);
 
       setRecommendations(aiResponse);
       toast({

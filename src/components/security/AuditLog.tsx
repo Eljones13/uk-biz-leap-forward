@@ -10,8 +10,7 @@ import { Shield, User, Database, Settings } from "lucide-react";
 
 interface AuditEvent {
   id: string;
-  action_type: string;
-  table_name?: string;
+  event_type: string;
   created_at: string;
   ip_address?: string | null;
   user_agent?: string;
@@ -29,16 +28,13 @@ export const AuditLog = () => {
       try {
         const { data, error } = await supabase
           .from("audit_logs")
-          .select("id, action_type, table_name, created_at, ip_address, user_agent")
+          .select("id, event_type, created_at, ip_address, user_agent")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(50);
           
         if (error) throw error;
-        setAuditEvents((data || []).map(event => ({
-          ...event,
-          ip_address: event.ip_address?.toString() || null
-        })));
+        setAuditEvents(data || []);
       } catch (error) {
         console.error("Error fetching audit events:", error);
       } finally {
@@ -49,8 +45,8 @@ export const AuditLog = () => {
     fetchAuditEvents();
   }, [user]);
 
-  const getActionIcon = (actionType: string) => {
-    switch (actionType.toLowerCase()) {
+  const getActionIcon = (eventType: string) => {
+    switch (eventType.toLowerCase()) {
       case "login":
       case "logout":
         return <User className="h-4 w-4" />;
@@ -65,8 +61,8 @@ export const AuditLog = () => {
     }
   };
 
-  const getActionColor = (actionType: string) => {
-    switch (actionType.toLowerCase()) {
+  const getActionColor = (eventType: string) => {
+    switch (eventType.toLowerCase()) {
       case "login":
         return "bg-green-500";
       case "logout":
@@ -121,20 +117,15 @@ export const AuditLog = () => {
                   key={event.id}
                   className="flex items-center gap-3 p-3 border rounded-lg"
                 >
-                  <div className={`p-2 rounded-full ${getActionColor(event.action_type)}`}>
-                    {getActionIcon(event.action_type)}
+                  <div className={`p-2 rounded-full ${getActionColor(event.event_type)}`}>
+                    {getActionIcon(event.event_type)}
                   </div>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-sm">
-                        {event.action_type.charAt(0).toUpperCase() + event.action_type.slice(1)}
+                        {event.event_type.charAt(0).toUpperCase() + event.event_type.slice(1)}
                       </span>
-                      {event.table_name && (
-                        <Badge variant="outline" className="text-xs">
-                          {event.table_name}
-                        </Badge>
-                      )}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(event.created_at))} ago

@@ -38,13 +38,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select(`
+          *,
+          subscriptions!inner(
+            subscription_tier,
+            subscription_status,
+            current_period_end
+          )
+        `)
         .eq("user_id", userId)
         .single();
       
       if (error && error.code !== "PGRST116") {
         console.error("Error fetching profile:", error);
         return null;
+      }
+      
+      if (data && data.subscriptions) {
+        return {
+          ...data,
+          subscription_tier: data.subscriptions.subscription_tier,
+          subscription_status: data.subscriptions.subscription_status,
+          subscription_expires_at: data.subscriptions.current_period_end
+        };
       }
       
       return data;
