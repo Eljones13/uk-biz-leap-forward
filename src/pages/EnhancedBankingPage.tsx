@@ -8,6 +8,8 @@ import { RevenueDashboard } from "@/components/banking/RevenueDashboard";
 import { SimpleFundingAdvisor } from "@/components/credit/SimpleFundingAdvisor";
 import { SecurityEnhancement } from "@/components/security/SecurityEnhancement";
 import { AuditLog } from "@/components/security/AuditLog";
+import { AffiliateDisclosure } from "@/components/legal/AffiliateDisclosure";
+import { AdviceDisclaimer } from "@/components/legal/AdviceDisclaimer";
 import { 
   Building2, 
   TrendingUp, 
@@ -60,6 +62,7 @@ export const EnhancedBankingPage = () => {
           </TabsList>
 
           <TabsContent value="banking" className="space-y-8">
+            <AffiliateDisclosure />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -71,6 +74,7 @@ export const EnhancedBankingPage = () => {
                 <EnhancedBankAccountComparison />
               </CardContent>
             </Card>
+            <AdviceDisclaimer />
           </TabsContent>
 
           <TabsContent value="revenue" className="space-y-8">
@@ -79,6 +83,7 @@ export const EnhancedBankingPage = () => {
 
           <TabsContent value="advisor" className="space-y-8">
             <SimpleFundingAdvisor />
+            <AdviceDisclaimer />
           </TabsContent>
 
           <TabsContent value="security" className="space-y-8">

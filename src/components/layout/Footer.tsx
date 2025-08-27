@@ -1,21 +1,37 @@
 
 import { Link } from "react-router-dom";
-import { Building2, Linkedin, Twitter, Youtube, ExternalLink } from "lucide-react";
+import { Building2, Linkedin, Twitter, Youtube } from "lucide-react";
 import { getRoutesByCategory } from "@/config/routes";
 import { CookieSettingsLink } from "../cookies/CookieSettingsLink";
+import { SITE } from "@/config/site";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
   const productRoutes = getRoutesByCategory("Product");
   const resourceRoutes = getRoutesByCategory("Resources");
   const companyRoutes = getRoutesByCategory("Company");
-  const legalRoutes = getRoutesByCategory("Legal");
 
   return (
     <footer className="bg-[#0B2447] text-[#F8FAFC]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          {/* Company Info */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Building2 className="h-5 w-5" />
+              <span className="font-semibold text-white">{SITE.name}</span>
+            </div>
+            <div className="text-sm text-[#94A3B8] space-y-2">
+              <p>© {currentYear} {SITE.legalName}</p>
+              <p>
+                {SITE.legalName} — Company No. {SITE.companyNumber} ({SITE.jurisdiction})
+              </p>
+              <p>Registered Office: {SITE.registeredOffice}</p>
+              {SITE.icoNumber && <p>ICO Reg: {SITE.icoNumber}</p>}
+            </div>
+          </div>
+
           {/* Product Column */}
           <div>
             <h4 className="font-semibold text-lg mb-4 text-white">Product</h4>
@@ -50,37 +66,42 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* Company Column */}
-          <div>
-            <h4 className="font-semibold text-lg mb-4 text-white">Company</h4>
-            <ul className="space-y-3">
-              {companyRoutes.map((route) => (
-                <li key={route.path}>
-                  <Link
-                    to={route.path}
-                    className="text-[#94A3B8] hover:text-white transition-colors text-sm"
-                  >
-                    {route.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Legal Column */}
           <div>
             <h4 className="font-semibold text-lg mb-4 text-white">Legal</h4>
             <ul className="space-y-3">
-              {legalRoutes.map((route) => (
-                <li key={route.path}>
-                  <Link
-                    to={route.path}
-                    className="text-[#94A3B8] hover:text-white transition-colors text-sm"
-                  >
-                    {route.name}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link
+                  to="/privacy"
+                  className="text-[#94A3B8] hover:text-white transition-colors text-sm"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/cookies"
+                  className="text-[#94A3B8] hover:text-white transition-colors text-sm"
+                >
+                  Cookie Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/terms"
+                  className="text-[#94A3B8] hover:text-white transition-colors text-sm"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/about"
+                  className="text-[#94A3B8] hover:text-white transition-colors text-sm"
+                >
+                  About
+                </Link>
+              </li>
               <li>
                 <CookieSettingsLink />
               </li>
@@ -91,18 +112,9 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-[#1E3A8A] pt-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
-            {/* Logo and Company Info */}
+            {/* Contact Info */}
             <div className="flex flex-col lg:flex-row items-center gap-4 text-sm text-[#94A3B8]">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                <span className="font-semibold text-white">BusinessBuilder Pro</span>
-              </div>
-              <div className="hidden lg:block text-[#94A3B8]">•</div>
-              <span>© {currentYear} BusinessBuilder Pro</span>
-              <div className="hidden lg:block text-[#94A3B8]">•</div>
-              <span>Company No. 12345678</span>
-              <div className="hidden lg:block text-[#94A3B8]">•</div>
-              <span>Registered office: 123 Business Street, London, EC1A 1BB</span>
+              <span>Support: <a href={`mailto:${SITE.supportEmail}`} className="text-white hover:underline">{SITE.supportEmail}</a></span>
             </div>
 
             {/* Social Links and Sitemap */}

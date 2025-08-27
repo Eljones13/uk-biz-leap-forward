@@ -8,6 +8,10 @@ import BlogPostPage from "@/pages/BlogPostPage";
 import LearnTutorialPage from "@/pages/LearnTutorialPage";
 import ContentCheck from "@/pages/ContentCheck";
 import SitemapPage from "@/pages/SitemapPage";
+import PrivacyPage from "@/pages/PrivacyPage";
+import CookiesPage from "@/pages/CookiesPage";
+import TermsPage from "@/pages/TermsPage";
+import AboutPage from "@/pages/AboutPage";
 
 export const routes = [
   {
@@ -33,6 +37,22 @@ export const routes = [
   {
     path: "/contact",
     component: ContactPage,
+  },
+  {
+    path: "/privacy",
+    component: PrivacyPage,
+  },
+  {
+    path: "/cookies",
+    component: CookiesPage,
+  },
+  {
+    path: "/terms",
+    component: TermsPage,
+  },
+  {
+    path: "/about",
+    component: AboutPage,
   },
   {
     path: "/sitemap",
@@ -76,10 +96,12 @@ export const getRoutesByCategory = (category: string) => {
     ],
     "Company": [
       { path: "/contact", name: "Contact", lastUpdated: "2024-01-06" },
+      { path: "/about", name: "About", lastUpdated: "2024-01-06" },
       { path: "/pricing", name: "Pricing", lastUpdated: "2024-01-04" },
     ],
     "Legal": [
       { path: "/privacy", name: "Privacy Policy", lastUpdated: "2023-12-20" },
+      { path: "/cookies", name: "Cookie Policy", lastUpdated: "2023-12-20" },
       { path: "/terms", name: "Terms of Service", lastUpdated: "2023-12-20" },
     ]
   };

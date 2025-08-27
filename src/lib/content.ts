@@ -1,6 +1,5 @@
 
 import matter from "gray-matter";
-import { BLOG_GLOB, LEARN_GLOB } from "./contentPaths";
 
 export async function loadContentIndex() {
   try {
@@ -12,7 +11,7 @@ export async function loadContentIndex() {
 }
 
 export async function loadBlogListFallback() {
-  const rawMap = import.meta.glob(BLOG_GLOB, { as: "raw" });
+  const rawMap = import.meta.glob("/src/content/blog/**/*.mdx", { as: "raw" });
   const list: any[] = [];
   for (const path in rawMap) {
     try {
@@ -26,7 +25,7 @@ export async function loadBlogListFallback() {
 }
 
 export async function loadLearnListFallback() {
-  const rawMap = import.meta.glob(LEARN_GLOB, { as: "raw" });
+  const rawMap = import.meta.glob("/src/content/learn/**/*.mdx", { as: "raw" });
   const list: any[] = [];
   for (const path in rawMap) {
     try {
