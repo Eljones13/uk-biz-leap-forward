@@ -34,7 +34,15 @@ export const AuditLog = () => {
           .limit(50);
           
         if (error) throw error;
-        setAuditEvents(data || []);
+        
+        // Handle the ip_address type conversion properly
+        const typedData = (data || []).map(event => ({
+          ...event,
+          ip_address: event.ip_address ? String(event.ip_address) : null,
+          user_agent: event.user_agent || undefined
+        }));
+        
+        setAuditEvents(typedData);
       } catch (error) {
         console.error("Error fetching audit events:", error);
       } finally {

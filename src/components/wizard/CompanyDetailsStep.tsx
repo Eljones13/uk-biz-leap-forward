@@ -64,6 +64,10 @@ export interface CompanyDetailsStepProps {
   onPrevious: () => void;
   canGoNext: boolean;
   canGoPrevious: boolean;
+  isLastStep?: boolean;
+  isLoading?: boolean;
+  onSubmit?: () => void;
+  onSaveProgress?: () => Promise<void>;
 }
 
 export const CompanyDetailsStep = ({ 

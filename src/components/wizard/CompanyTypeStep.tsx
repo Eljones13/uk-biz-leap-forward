@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -58,7 +57,13 @@ export interface CompanyTypeStepProps {
   formData: CompanyRegistrationData;
   onUpdate: (data: Partial<CompanyRegistrationData>) => void;
   onNext: () => void;
+  onPrevious?: () => void;
   canGoNext: boolean;
+  canGoPrevious?: boolean;
+  isLastStep?: boolean;
+  isLoading?: boolean;
+  onSubmit?: () => void;
+  onSaveProgress?: () => Promise<void>;
 }
 
 export const CompanyTypeStep = ({ formData, onUpdate, onNext, canGoNext }: CompanyTypeStepProps) => {

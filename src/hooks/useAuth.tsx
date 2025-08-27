@@ -36,34 +36,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      // First fetch the profile
+      const { data: profileData, error: profileError } = await supabase
         .from("profiles")
-        .select(`
-          *,
-          subscriptions!inner(
-            subscription_tier,
-            subscription_status,
-            current_period_end
-          )
-        `)
+        .select("*")
         .eq("user_id", userId)
         .single();
       
-      if (error && error.code !== "PGRST116") {
-        console.error("Error fetching profile:", error);
+      if (profileError && profileError.code !== "PGRST116") {
+        console.error("Error fetching profile:", profileError);
         return null;
       }
       
-      if (data && data.subscriptions) {
-        return {
-          ...data,
-          subscription_tier: data.subscriptions.subscription_tier,
-          subscription_status: data.subscriptions.subscription_status,
-          subscription_expires_at: data.subscriptions.current_period_end
-        };
+      // Then fetch the subscription separately
+      const { data: subscriptionData, error: subscriptionError } = await supabase
+        .from("subscriptions")
+        .select("subscription_tier, subscription_status, current_period_end")
+        .eq("user_id", userId)
+        .single();
+      
+      if (subscriptionError && subscriptionError.code !== "PGRST116") {
+        console.error("Error fetching subscription:", subscriptionError);
       }
       
-      return data;
+      if (profileData) {
+        return {
+          ...profileData,
+          subscription_tier: subscriptionData?.subscription_tier || 'free',
+          subscription_status: subscriptionData?.subscription_status || 'inactive',
+          subscription_expires_at: subscriptionData?.current_period_end || null
+        } as Profile;
+      }
+      
+      return null;
     } catch (error) {
       console.error("Error fetching profile:", error);
       return null;

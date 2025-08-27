@@ -59,6 +59,11 @@ export interface ReviewStepProps {
   onPrevious: () => void;
   isLoading: boolean;
   canGoPrevious: boolean;
+  onUpdate?: (data: Partial<CompanyRegistrationData>) => void;
+  onNext?: () => void;
+  canGoNext?: boolean;
+  isLastStep?: boolean;
+  onSaveProgress?: () => Promise<void>;
 }
 
 export const ReviewStep = ({ 
