@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mdx({ 
+      include: ['**/*.mdx', '**/*.md'],
       remarkPlugins: [remarkGfm], 
       rehypePlugins: [rehypeSanitize] 
     }),

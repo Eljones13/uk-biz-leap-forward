@@ -10,16 +10,16 @@ async function buildContentIndex() {
   const modules = {};
 
   // Ensure content directories exist
-  await fs.ensureDir('content/blog');
-  await fs.ensureDir('content/learn/company-formation');
-  await fs.ensureDir('content/learn/banking');
-  await fs.ensureDir('content/learn/credit-funding');
-  await fs.ensureDir('content/learn/legal-compliance');
-  await fs.ensureDir('content/learn/general-support');
+  await fs.ensureDir('src/content/blog');
+  await fs.ensureDir('src/content/learn/company-formation');
+  await fs.ensureDir('src/content/learn/banking');
+  await fs.ensureDir('src/content/learn/credit-funding');
+  await fs.ensureDir('src/content/learn/legal-compliance');
+  await fs.ensureDir('src/content/learn/general-support');
 
   try {
     // Process blog posts
-    const blogFiles = await glob('content/blog/**/*.mdx');
+    const blogFiles = await glob('src/content/blog/**/*.mdx');
     for (const file of blogFiles) {
       try {
         const content = await fs.readFile(file, 'utf8');
@@ -55,14 +55,14 @@ async function buildContentIndex() {
           excerpt: excerpt || description.substring(0, 160) + '...'
         });
 
-        modules[`blog/${slug}`] = `() => import("../${file}")`;
+        modules[`blog/${slug}`] = `() => import("../content/blog/${slug}.mdx")`;
       } catch (error) {
         console.warn(`Error processing blog file ${file}:`, error.message);
       }
     }
 
     // Process learn tutorials
-    const learnFiles = await glob('content/learn/**/*.mdx');
+    const learnFiles = await glob('src/content/learn/**/*.mdx');
     for (const file of learnFiles) {
       try {
         const content = await fs.readFile(file, 'utf8');
@@ -81,7 +81,7 @@ async function buildContentIndex() {
         }
         
         const slug = path.basename(file, '.mdx');
-        const relativePath = path.relative('content/learn', file);
+        const relativePath = path.relative('src/content/learn', file);
         const category = path.dirname(relativePath);
         const author = frontmatter.author || 'BusinessBuilder Pro';
         const description = frontmatter.description || excerpt || frontmatter.title;
@@ -105,7 +105,7 @@ async function buildContentIndex() {
           excerpt: excerpt || description.substring(0, 160) + '...'
         });
 
-        modules[`learn/${category}/${slug}`] = `() => import("../${file}")`;
+        modules[`learn/${category}/${slug}`] = `() => import("../content/learn/${category}/${slug}.mdx")`;
       } catch (error) {
         console.warn(`Error processing learn file ${file}:`, error.message);
       }
