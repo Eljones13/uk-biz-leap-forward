@@ -24,7 +24,7 @@ const POSTS_PER_PAGE = 10;
 
 const BlogPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState<BlogPost[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -61,7 +61,7 @@ const BlogPage = () => {
         categories.add('Uncategorised');
       }
     });
-    return Array.from(categories).sort();
+    return ['All', ...Array.from(categories).sort()];
   }, [blogPosts]);
 
   const filteredPosts = useMemo(() => {
@@ -158,18 +158,17 @@ const BlogPage = () => {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-4 py-2 rounded-md border border-input bg-background text-foreground min-h-[44px]"
               >
-                <option value="">All Categories</option>
                 {allCategories.map(category => (
                   <option key={category} value={category}>{category}</option>
                 ))}
               </select>
             </div>
             
-            {(searchTerm || selectedCategory) && (
+            {(searchTerm || selectedCategory !== 'All') && (
               <p className="text-sm text-muted-foreground">
                 Showing {filteredPosts.length} result{filteredPosts.length !== 1 ? 's' : ''}
                 {searchTerm && ` for "${searchTerm}"`}
-                {selectedCategory && ` in "${selectedCategory}"`}
+                {selectedCategory !== 'All' && ` in "${selectedCategory}"`}
               </p>
             )}
           </div>
