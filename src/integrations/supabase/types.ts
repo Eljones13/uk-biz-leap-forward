@@ -14,13 +14,237 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      company_registrations: {
+        Row: {
+          company_name: string
+          company_type: string
+          created_at: string
+          directors: Json | null
+          id: string
+          registered_office: Json
+          share_capital: Json | null
+          shareholders: Json | null
+          sic_codes: string[] | null
+          status: string | null
+          submission_reference: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_name: string
+          company_type: string
+          created_at?: string
+          directors?: Json | null
+          id?: string
+          registered_office: Json
+          share_capital?: Json | null
+          shareholders?: Json | null
+          sic_codes?: string[] | null
+          status?: string | null
+          submission_reference?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_name?: string
+          company_type?: string
+          created_at?: string
+          directors?: Json | null
+          id?: string
+          registered_office?: Json
+          share_capital?: Json | null
+          shareholders?: Json | null
+          sic_codes?: string[] | null
+          status?: string | null
+          submission_reference?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      gdpr_requests: {
+        Row: {
+          id: string
+          processed_at: string | null
+          request_type: string
+          requested_at: string
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          processed_at?: string | null
+          request_type: string
+          requested_at?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          processed_at?: string | null
+          request_type?: string
+          requested_at?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      legal_documents: {
+        Row: {
+          created_at: string
+          document_data: Json
+          document_type: string
+          generated_content: string | null
+          id: string
+          pdf_url: string | null
+          status: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          document_data?: Json
+          document_type: string
+          generated_content?: string | null
+          id?: string
+          pdf_url?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          document_data?: Json
+          document_type?: string
+          generated_content?: string | null
+          id?: string
+          pdf_url?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          role: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_status: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_subscription_tier: {
+        Args: { user_uuid: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
