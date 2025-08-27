@@ -28,6 +28,11 @@ const LearnTutorialPage = lazy(() => import("./pages/LearnTutorialPage"));
 const SupportPage = lazy(() => import("./pages/SupportPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const CookiesPage = lazy(() => import("./pages/CookiesPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const ContentCheck = lazy(() => import("./pages/ContentCheck"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
@@ -76,6 +81,11 @@ function App() {
                         <Route path="support" element={<SupportPage />} />
                         <Route path="settings" element={<SettingsPage />} />
                         <Route path="contact" element={<ContactPage />} />
+                        <Route path="privacy" element={<PrivacyPage />} />
+                        <Route path="cookies" element={<CookiesPage />} />
+                        <Route path="terms" element={<TermsPage />} />
+                        <Route path="about" element={<AboutPage />} />
+                        <Route path="content-check" element={<ContentCheck />} />
                         <Route path="*" element={<NotFound />} />
                       </Route>
                     </Routes>

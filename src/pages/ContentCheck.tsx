@@ -16,11 +16,14 @@ const ContentCheck = () => {
     try {
       // Load from index
       const indexContent = await loadContentIndex();
+      console.log('Index content:', indexContent);
       setIndexData(indexContent);
 
       // Load from globs (fallback method)
       const blogGlob = await loadBlogListFallback();
       const learnGlob = await loadLearnListFallback();
+      console.log('Blog glob:', blogGlob);
+      console.log('Learn glob:', learnGlob);
       
       // Get file paths using import.meta.glob
       const blogRaw = import.meta.glob('/src/content/blog/**/*.mdx', { as: 'raw' });
@@ -38,6 +41,25 @@ const ContentCheck = () => {
       });
     } catch (error) {
       console.error('Diagnostics error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rebuildIndex = async () => {
+    try {
+      setLoading(true);
+      // Force rebuild by clearing the index and reloading
+      const blogContent = await loadBlogListFallback();
+      const learnContent = await loadLearnListFallback();
+      
+      const combined = [...blogContent, ...learnContent];
+      console.log('Rebuilt index:', combined);
+      
+      setIndexData(combined);
+      await loadDiagnostics();
+    } catch (error) {
+      console.error('Rebuild error:', error);
     } finally {
       setLoading(false);
     }
@@ -85,7 +107,7 @@ const ContentCheck = () => {
                 <CardTitle className="text-destructive">No Content Found</CardTitle>
               </div>
               <CardDescription>
-                No MDX files found under /src/content. Seed content should be created.
+                No MDX files found under /src/content. Content should be created.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -99,7 +121,7 @@ const ContentCheck = () => {
                 <CardTitle className="text-yellow-700">Index Out of Date</CardTitle>
               </div>
               <CardDescription>
-                More files found via glob than in index. Re-run prebuild to regenerate index.
+                More files found via glob than in index. Try rebuilding the index.
               </CardDescription>
             </CardHeader>
           </Card>
@@ -159,7 +181,7 @@ const ContentCheck = () => {
         </div>
 
         {/* File List */}
-        <Card>
+        <Card className="mb-6">
           <CardHeader>
             <CardTitle>Discovered Files</CardTitle>
             <CardDescription>
@@ -185,6 +207,10 @@ const ContentCheck = () => {
           <Button onClick={loadDiagnostics}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh Diagnostics
+          </Button>
+          <Button onClick={rebuildIndex} variant="secondary">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Rebuild Index
           </Button>
           <Button variant="outline" onClick={() => window.location.href = '/blog'}>
             View Blog
