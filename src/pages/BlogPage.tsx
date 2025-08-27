@@ -1,4 +1,3 @@
-
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,10 +20,11 @@ interface BlogPost {
 }
 
 const POSTS_PER_PAGE = 10;
+const ALL = 'all';
 
 const BlogPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState(ALL);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState<BlogPost[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -45,7 +45,9 @@ const BlogPage = () => {
         setBlogPosts(posts);
       } catch (error) {
         console.error('Error loading blog posts:', error);
-        setBlogPosts([]);
+        // Force fallback on error
+        const fallbackPosts = await loadBlogListFallback();
+        setBlogPosts(fallbackPosts);
       } finally {
         setLoading(false);
       }
@@ -54,38 +56,38 @@ const BlogPage = () => {
     loadPosts();
   }, []);
 
+  const getCategory = (post: BlogPost) => {
+    const c = post.category ?? 'Uncategorised';
+    return (Array.isArray(c) ? c[0] : c).toString().trim();
+  };
+
   const allCategories = useMemo(() => {
     const categories = new Set<string>();
     blogPosts.forEach(post => {
-      if (post.category) {
-        categories.add(post.category);
-      }
+      categories.add(getCategory(post));
     });
     const sortedCategories = Array.from(categories).sort();
-    
-    // Always include "All" first, then categories, then "Uncategorised" if there are posts without categories
-    const hasUncategorised = blogPosts.some(post => !post.category);
-    const result = ['All', ...sortedCategories];
-    if (hasUncategorised) {
-      result.push('Uncategorised');
-    }
-    return result;
+    return [ALL, ...sortedCategories];
   }, [blogPosts]);
 
   const filteredPosts = useMemo(() => {
     let posts = searchTerm ? searchResults : blogPosts;
     
-    // Category filtering - "All" shows everything
-    if (selectedCategory && selectedCategory !== 'All') {
+    const selected = selectedCategory.toString().trim().toLowerCase();
+    
+    // Category filtering - "all" shows everything
+    if (selected !== ALL) {
       posts = posts.filter(post => {
-        if (selectedCategory === 'Uncategorised') {
-          return !post.category;
-        }
-        return post.category === selectedCategory;
+        return getCategory(post).toLowerCase() === selected;
       });
     }
     
-    return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return posts.sort((a, b) => {
+      // Safe date parsing
+      const dateA = new Date(a.date).getTime();
+      const dateB = new Date(b.date).getTime();
+      return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+    });
   }, [searchTerm, searchResults, selectedCategory, blogPosts]);
 
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
@@ -98,7 +100,9 @@ const BlogPage = () => {
   }, [searchTerm, selectedCategory]);
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Recently';
+    return date.toLocaleDateString('en-GB', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -172,19 +176,21 @@ const BlogPage = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-2 rounded-md border border-input bg-background text-foreground min-h-[44px]"
+                className="px-4 py-2 rounded-md border border-input bg-background text-foreground min-h-[44px] capitalize"
               >
                 {allCategories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category} value={category} className="capitalize">
+                    {category === ALL ? 'All Categories' : category}
+                  </option>
                 ))}
               </select>
             </div>
             
-            {(searchTerm || selectedCategory !== 'All') && (
+            {(searchTerm || selectedCategory !== ALL) && (
               <p className="text-sm text-muted-foreground">
                 Showing {filteredPosts.length} result{filteredPosts.length !== 1 ? 's' : ''}
                 {searchTerm && ` for "${searchTerm}"`}
-                {selectedCategory !== 'All' && ` in "${selectedCategory}"`}
+                {selectedCategory !== ALL && ` in "${selectedCategory}"`}
               </p>
             )}
           </div>
@@ -224,8 +230,8 @@ const BlogPage = () => {
                         </div>
                         {post.category && (
                           <div className="mb-2">
-                            <Badge variant="secondary" className="text-xs">
-                              {post.category}
+                            <Badge variant="secondary" className="text-xs capitalize">
+                              {getCategory(post)}
                             </Badge>
                           </div>
                         )}
@@ -263,7 +269,6 @@ const BlogPage = () => {
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex justify-center items-center gap-2 mt-12">
                     <Button
@@ -321,7 +326,6 @@ const BlogPage = () => {
           </div>
         </section>
 
-        {/* Newsletter Signup */}
         <section className="py-12 sm:py-16 px-4 bg-muted/50">
           <div className="container mx-auto max-w-2xl text-center">
             <h2 className="text-2xl sm:text-3xl font-bold mb-4">Stay Updated</h2>

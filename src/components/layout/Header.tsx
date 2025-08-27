@@ -4,13 +4,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Building2, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getNavRoutes } from "@/config/routes";
+import { NAV } from "@/config/nav";
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const navRoutes = getNavRoutes();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,7 +73,7 @@ export const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              {navRoutes.map((route) => (
+              {NAV.map((route) => (
                 <Link
                   key={route.path}
                   to={route.path}
@@ -85,7 +84,7 @@ export const Header = () => {
                       : "text-muted-foreground"
                   )}
                 >
-                  {route.name}
+                  {route.label}
                 </Link>
               ))}
             </nav>
@@ -132,7 +131,7 @@ export const Header = () => {
           />
           <nav className="relative bg-background border-r shadow-lg h-full w-80 max-w-sm p-6 overflow-y-auto">
             <div className="space-y-1 mb-8">
-              {navRoutes.map((route) => (
+              {NAV.map((route) => (
                 <Link
                   key={route.path}
                   to={route.path}
@@ -143,7 +142,7 @@ export const Header = () => {
                       : "text-muted-foreground"
                   )}
                 >
-                  {route.name}
+                  {route.label}
                 </Link>
               ))}
             </div>

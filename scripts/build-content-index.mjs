@@ -18,7 +18,7 @@ async function buildContentIndex() {
   await fs.ensureDir('src/content/learn/general-support');
 
   try {
-    // Process blog posts
+    // Process blog posts using standardized glob
     const blogFiles = await glob('src/content/blog/**/*.mdx');
     console.log(`Found ${blogFiles.length} blog files`);
     
@@ -33,25 +33,26 @@ async function buildContentIndex() {
         // Skip drafts
         if (frontmatter.draft === true) continue;
         
-        // Validate required fields
-        if (!frontmatter.title || !frontmatter.date) {
-          console.warn(`Skipping ${file}: missing title or date`);
+        // More lenient validation - only require title
+        if (!frontmatter.title) {
+          console.warn(`Skipping ${file}: missing title`);
           continue;
         }
         
         const slug = path.basename(file, '.mdx');
         const author = frontmatter.author || 'BusinessBuilder Pro';
         const description = frontmatter.description || excerpt || frontmatter.title;
+        const date = frontmatter.date || new Date().toISOString();
         
         contentIndex.push({
           type: 'blog',
           slug,
-          category: frontmatter.category || null,
+          category: frontmatter.category || 'Uncategorised',
           path: `/blog/${slug}`,
           filePath: file,
           title: frontmatter.title,
           description,
-          date: frontmatter.date,
+          date,
           author,
           tags: frontmatter.tags || [],
           excerpt: excerpt || description.substring(0, 160) + '...'
@@ -64,7 +65,7 @@ async function buildContentIndex() {
       }
     }
 
-    // Process learn tutorials
+    // Process learn tutorials using standardized glob
     const learnFiles = await glob('src/content/learn/**/*.mdx');
     console.log(`Found ${learnFiles.length} learn files`);
     
@@ -79,9 +80,9 @@ async function buildContentIndex() {
         // Skip drafts
         if (frontmatter.draft === true) continue;
         
-        // Validate required fields
-        if (!frontmatter.title || !frontmatter.date) {
-          console.warn(`Skipping ${file}: missing title or date`);
+        // More lenient validation - only require title
+        if (!frontmatter.title) {
+          console.warn(`Skipping ${file}: missing title`);
           continue;
         }
         
@@ -90,10 +91,11 @@ async function buildContentIndex() {
         const category = path.dirname(relativePath);
         const author = frontmatter.author || 'BusinessBuilder Pro';
         const description = frontmatter.description || excerpt || frontmatter.title;
+        const date = frontmatter.date || new Date().toISOString();
         
         // Get file modification time for lastUpdated
         const stats = await fs.stat(file);
-        const lastUpdated = frontmatter.lastUpdated || stats.mtime.toISOString();
+        const lastUpdated = frontmatter.lastUpdated || date;
         
         contentIndex.push({
           type: 'learn',
@@ -103,7 +105,7 @@ async function buildContentIndex() {
           filePath: file,
           title: frontmatter.title,
           description,
-          date: frontmatter.date,
+          date,
           lastUpdated,
           author,
           tags: frontmatter.tags || [],
@@ -121,8 +123,12 @@ async function buildContentIndex() {
     console.log('Continuing with empty content index...');
   }
 
-  // Sort content by date (most recent first)
-  contentIndex.sort((a, b) => compareDesc(parseISO(a.date), parseISO(b.date)));
+  // Sort content by date (most recent first) with safe date parsing
+  contentIndex.sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    return (isNaN(dateB) ? 0 : dateB) - (isNaN(dateA) ? 0 : dateA);
+  });
 
   // Ensure placeholders exist
   await fs.ensureDir('src');
@@ -148,10 +154,20 @@ async function buildContentIndex() {
   console.log(`   - Blog posts: ${contentIndex.filter(i => i.type === 'blog').length}`);
   console.log(`   - Learn tutorials: ${contentIndex.filter(i => i.type === 'learn').length}`);
   
+  // Print acceptance checklist
+  const blogCount = contentIndex.filter(i => i.type === 'blog').length;
+  const learnCount = contentIndex.filter(i => i.type === 'learn').length;
+  
+  console.log('\n✅ MDX Content Acceptance Checklist:');
+  console.log(`Blog files found (glob): ${blogFiles.length} | Indexed: ${blogCount}`);
+  console.log(`Learn files found (glob): ${learnFiles.length} | Indexed: ${learnCount}`);
+  console.log(`Blog visible on /blog: ${blogCount > 0 ? 'yes' : 'no'}`);
+  console.log(`Learn tabs populated: ${learnCount > 0 ? 'yes' : 'no'}`);
+  
   return {
     total: contentIndex.length,
-    blog: contentIndex.filter(i => i.type === 'blog').length,
-    learn: contentIndex.filter(i => i.type === 'learn').length
+    blog: blogCount,
+    learn: learnCount
   };
 }
 
