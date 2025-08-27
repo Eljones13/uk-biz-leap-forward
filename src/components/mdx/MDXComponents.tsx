@@ -4,6 +4,7 @@ import { Callout } from "./Callout";
 import { ProsCons } from "./ProsCons";
 import { Step } from "./Step";
 import { CTA } from "./CTA";
+import { NewsletterSignup } from "./NewsletterSignup";
 
 export const mdxComponents = {
   h1: ({ children, ...props }: any) => (
@@ -73,4 +74,5 @@ export const mdxComponents = {
   ProsCons,
   Step,
   CTA,
+  NewsletterSignup,
 };

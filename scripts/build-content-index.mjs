@@ -11,7 +11,11 @@ async function buildContentIndex() {
 
   // Ensure content directories exist
   await fs.ensureDir('content/blog');
-  await fs.ensureDir('content/learn');
+  await fs.ensureDir('content/learn/company-formation');
+  await fs.ensureDir('content/learn/banking');
+  await fs.ensureDir('content/learn/credit-funding');
+  await fs.ensureDir('content/learn/legal-compliance');
+  await fs.ensureDir('content/learn/general-support');
 
   try {
     // Process blog posts
@@ -77,7 +81,8 @@ async function buildContentIndex() {
         }
         
         const slug = path.basename(file, '.mdx');
-        const category = path.dirname(file).split('/').pop();
+        const relativePath = path.relative('content/learn', file);
+        const category = path.dirname(relativePath);
         const author = frontmatter.author || 'BusinessBuilder Pro';
         const description = frontmatter.description || excerpt || frontmatter.title;
         
