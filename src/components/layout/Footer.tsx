@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Building2, Linkedin, Twitter, Youtube, ExternalLink } from "lucide-react";
 import { getRoutesByCategory } from "@/config/routes";
+import { CookieSettingsLink } from "../cookies/CookieSettingsLink";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -80,6 +81,9 @@ export const Footer = () => {
                   </Link>
                 </li>
               ))}
+              <li>
+                <CookieSettingsLink />
+              </li>
             </ul>
           </div>
         </div>

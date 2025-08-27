@@ -55,18 +55,19 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Enhanced Hero Section with Background Image */}
+      {/* Enhanced Hero Section with New Background Image */}
       <section 
         className="relative py-20 px-4 min-h-[600px] lg:min-h-[700px] flex items-center"
         style={{
           backgroundImage: "url('/lovable-uploads/a0f74d28-b829-433c-903d-1c2c8e45ef5e.png'), linear-gradient(to bottom, #F3F5F8, #F3F5F8)",
           backgroundSize: "cover",
           backgroundPosition: "center center",
-          backgroundRepeat: "no-repeat"
+          backgroundRepeat: "no-repeat",
+          backgroundColor: "#F3F5F8"
         }}
       >
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40" />
+        {/* Enhanced Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black/50" />
         
         <div className="container mx-auto max-w-4xl text-center relative z-10">
           <Badge variant="secondary" className="mb-4 bg-white/90 text-primary">
