@@ -1,3 +1,4 @@
+
 import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,13 +17,14 @@ interface BlogPost {
   date: string;
   author: string;
   tags: string[];
+  category?: string;
 }
 
 const POSTS_PER_PAGE = 10;
 
 const BlogPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTag, setSelectedTag] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchResults, setSearchResults] = useState<BlogPost[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -50,21 +52,32 @@ const BlogPage = () => {
     loadPosts();
   }, []);
 
-  const allTags = useMemo(() => {
-    const tags = new Set<string>();
-    blogPosts.forEach(post => post.tags?.forEach(tag => tags.add(tag)));
-    return Array.from(tags).sort();
+  const allCategories = useMemo(() => {
+    const categories = new Set<string>();
+    blogPosts.forEach(post => {
+      if (post.category) {
+        categories.add(post.category);
+      } else {
+        categories.add('Uncategorised');
+      }
+    });
+    return Array.from(categories).sort();
   }, [blogPosts]);
 
   const filteredPosts = useMemo(() => {
     let posts = searchTerm ? searchResults : blogPosts;
     
-    if (selectedTag) {
-      posts = posts.filter(post => post.tags?.includes(selectedTag));
+    if (selectedCategory && selectedCategory !== 'All') {
+      posts = posts.filter(post => {
+        if (selectedCategory === 'Uncategorised') {
+          return !post.category;
+        }
+        return post.category === selectedCategory;
+      });
     }
     
     return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [searchTerm, searchResults, selectedTag, blogPosts]);
+  }, [searchTerm, searchResults, selectedCategory, blogPosts]);
 
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
   const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
@@ -73,7 +86,7 @@ const BlogPage = () => {
   // Reset pagination when filters change
   useMemo(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedTag]);
+  }, [searchTerm, selectedCategory]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-GB', {
@@ -141,22 +154,22 @@ const BlogPage = () => {
                 onSearchChange={setSearchTerm}
               />
               <select
-                value={selectedTag}
-                onChange={(e) => setSelectedTag(e.target.value)}
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-4 py-2 rounded-md border border-input bg-background text-foreground min-h-[44px]"
               >
                 <option value="">All Categories</option>
-                {allTags.map(tag => (
-                  <option key={tag} value={tag}>{tag}</option>
+                {allCategories.map(category => (
+                  <option key={category} value={category}>{category}</option>
                 ))}
               </select>
             </div>
             
-            {(searchTerm || selectedTag) && (
+            {(searchTerm || selectedCategory) && (
               <p className="text-sm text-muted-foreground">
                 Showing {filteredPosts.length} result{filteredPosts.length !== 1 ? 's' : ''}
                 {searchTerm && ` for "${searchTerm}"`}
-                {selectedTag && ` tagged "${selectedTag}"`}
+                {selectedCategory && ` in "${selectedCategory}"`}
               </p>
             )}
           </div>
@@ -189,6 +202,13 @@ const BlogPage = () => {
                             {post.author}
                           </Link>
                         </div>
+                        {post.category && (
+                          <div className="mb-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {post.category}
+                            </Badge>
+                          </div>
+                        )}
                         <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
                           <Link to={`/blog/${post.slug}`}>
                             {post.title}
@@ -203,8 +223,8 @@ const BlogPage = () => {
                           {post.tags?.map((tag) => (
                             <Badge
                               key={tag}
-                              variant="secondary"
-                              className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                              variant="outline"
+                              className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors text-xs"
                             >
                               <Link to={`/blog/tag/${encodeURIComponent(tag)}`}>
                                 {tag}
