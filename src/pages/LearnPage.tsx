@@ -18,6 +18,7 @@ interface LearnContent {
   title: string;
   description: string;
   date: string;
+  lastUpdated?: string;
   author: string;
   tags: string[];
 }
@@ -53,7 +54,7 @@ const LearnPage = () => {
       const matchesTag = selectedTag === "" || item.tags?.includes(selectedTag);
       
       return matchesSearch && matchesCategory && matchesTag;
-    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    }).sort((a, b) => new Date(b.lastUpdated || b.date).getTime() - new Date(a.lastUpdated || a.date).getTime());
   }, [searchTerm, activeCategory, selectedTag, learnContent]);
 
   const formatDate = (dateString: string) => {
@@ -155,7 +156,12 @@ const LearnPage = () => {
 
                   {filteredContent.length === 0 ? (
                     <div className="text-center py-12">
-                      <p className="text-muted-foreground text-lg">No tutorials found matching your criteria.</p>
+                      <p className="text-muted-foreground text-lg">
+                        {learnContent.length === 0 
+                          ? "No tutorials available yet. Check back soon!"
+                          : "No tutorials found matching your criteria."
+                        }
+                      </p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,9 +170,10 @@ const LearnPage = () => {
                           <CardHeader>
                             <div className="flex items-center justify-between mb-2">
                               <Badge variant="outline">{category.name}</Badge>
-                              <span className="text-sm text-muted-foreground">
-                                Updated {formatDate(item.date)}
-                              </span>
+                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <Clock className="h-3 w-3" />
+                                <span>Updated {formatDate(item.lastUpdated || item.date)}</span>
+                              </div>
                             </div>
                             <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
                               <Link to={`/learn/${item.category}/${item.slug}`}>

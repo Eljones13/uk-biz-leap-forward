@@ -21,7 +21,32 @@ async function buildSitemap() {
     priority: item.type === 'blog' ? '0.7' : '0.6'
   }));
 
-  const allRoutes = [...staticRoutes, ...contentRoutes];
+  // Add tag pages
+  const allTags = new Set();
+  contentIndex.forEach(item => {
+    if (item.tags) {
+      item.tags.forEach(tag => allTags.add(tag));
+    }
+  });
+
+  const tagRoutes = Array.from(allTags).map(tag => ({
+    path: `/blog/tag/${encodeURIComponent(tag)}`,
+    priority: '0.6'
+  }));
+
+  // Add author pages
+  const authorRoutes = [
+    { path: '/blog/author/businessbuilder-pro', priority: '0.6' }
+  ];
+
+  // Add learn category pages
+  const categories = ['company-formation', 'banking', 'credit-funding', 'legal-compliance', 'general-support'];
+  const categoryRoutes = categories.map(category => ({
+    path: `/learn#${category}`,
+    priority: '0.7'
+  }));
+
+  const allRoutes = [...staticRoutes, ...contentRoutes, ...tagRoutes, ...authorRoutes, ...categoryRoutes];
 
   const urlElements = allRoutes.map(route => `
     <url>

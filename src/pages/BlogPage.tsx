@@ -2,9 +2,8 @@
 import { useState, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar, User, Search, ArrowRight, Rss, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, User, ArrowRight, Rss, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/seo/SEO";
 import { BlogSearch } from "@/components/blog/BlogSearch";
@@ -135,7 +134,12 @@ const BlogPage = () => {
           <div className="container mx-auto max-w-6xl">
             {paginatedPosts.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">No articles found matching your criteria.</p>
+                <p className="text-muted-foreground text-lg">
+                  {blogPosts.length === 0 
+                    ? "No blog posts available yet. Check back soon!"
+                    : "No articles found matching your criteria."
+                  }
+                </p>
               </div>
             ) : (
               <>
@@ -200,17 +204,30 @@ const BlogPage = () => {
                     </Button>
                     
                     <div className="flex gap-1">
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <Button
-                          key={page}
-                          variant={currentPage === page ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setCurrentPage(page)}
-                          className="w-10"
-                        >
-                          {page}
-                        </Button>
-                      ))}
+                      {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                        let page;
+                        if (totalPages <= 5) {
+                          page = i + 1;
+                        } else if (currentPage <= 3) {
+                          page = i + 1;
+                        } else if (currentPage >= totalPages - 2) {
+                          page = totalPages - 4 + i;
+                        } else {
+                          page = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <Button
+                            key={page}
+                            variant={currentPage === page ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(page)}
+                            className="w-10"
+                          >
+                            {page}
+                          </Button>
+                        );
+                      })}
                     </div>
                     
                     <Button
@@ -237,7 +254,11 @@ const BlogPage = () => {
               Get the latest insights on UK business formation and growth strategies delivered to your inbox.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <Input placeholder="Enter your email" type="email" className="flex-1" />
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="px-4 py-2 rounded-md border border-input bg-background text-foreground flex-1"
+              />
               <Button>Subscribe</Button>
             </div>
           </div>
