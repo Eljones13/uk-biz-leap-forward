@@ -20,6 +20,8 @@ async function buildContentIndex() {
   try {
     // Process blog posts
     const blogFiles = await glob('src/content/blog/**/*.mdx');
+    console.log(`Found ${blogFiles.length} blog files`);
+    
     for (const file of blogFiles) {
       try {
         const content = await fs.readFile(file, 'utf8');
@@ -44,7 +46,7 @@ async function buildContentIndex() {
         contentIndex.push({
           type: 'blog',
           slug,
-          category: null,
+          category: frontmatter.category || null,
           path: `/blog/${slug}`,
           filePath: file,
           title: frontmatter.title,
@@ -56,6 +58,7 @@ async function buildContentIndex() {
         });
 
         modules[`blog/${slug}`] = `() => import("../content/blog/${slug}.mdx")`;
+        console.log(`✓ Processed blog: ${slug}`);
       } catch (error) {
         console.warn(`Error processing blog file ${file}:`, error.message);
       }
@@ -63,6 +66,8 @@ async function buildContentIndex() {
 
     // Process learn tutorials
     const learnFiles = await glob('src/content/learn/**/*.mdx');
+    console.log(`Found ${learnFiles.length} learn files`);
+    
     for (const file of learnFiles) {
       try {
         const content = await fs.readFile(file, 'utf8');
@@ -106,6 +111,7 @@ async function buildContentIndex() {
         });
 
         modules[`learn/${category}/${slug}`] = `() => import("../content/learn/${category}/${slug}.mdx")`;
+        console.log(`✓ Processed learn: ${category}/${slug}`);
       } catch (error) {
         console.warn(`Error processing learn file ${file}:`, error.message);
       }
@@ -118,8 +124,10 @@ async function buildContentIndex() {
   // Sort content by date (most recent first)
   contentIndex.sort((a, b) => compareDesc(parseISO(a.date), parseISO(b.date)));
 
-  // Write content index
+  // Ensure placeholders exist
   await fs.ensureDir('src');
+  
+  // Write content index
   await fs.writeFile(
     'src/content-index.json',
     JSON.stringify(contentIndex, null, 2)
@@ -131,12 +139,20 @@ async function buildContentIndex() {
     .join(',\n');
 
   const moduleContent = moduleExports 
-    ? `export const modules = {\n${moduleExports}\n};\n`
-    : `export const modules = {};\n`;
+    ? `\nexport const modules = {\n${moduleExports}\n};\n`
+    : `\nexport const modules = {};\n`;
     
   await fs.writeFile('src/content-modules.mjs', moduleContent);
 
-  console.log(`Built content index: ${contentIndex.length} items`);
+  console.log(`✅ Built content index: ${contentIndex.length} items`);
+  console.log(`   - Blog posts: ${contentIndex.filter(i => i.type === 'blog').length}`);
+  console.log(`   - Learn tutorials: ${contentIndex.filter(i => i.type === 'learn').length}`);
+  
+  return {
+    total: contentIndex.length,
+    blog: contentIndex.filter(i => i.type === 'blog').length,
+    learn: contentIndex.filter(i => i.type === 'learn').length
+  };
 }
 
 buildContentIndex().catch(console.error);

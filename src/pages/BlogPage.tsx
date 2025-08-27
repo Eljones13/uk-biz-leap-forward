@@ -37,9 +37,11 @@ const BlogPage = () => {
         posts = posts.filter((item: any) => item.type === 'blog');
         
         if (posts.length === 0) {
+          console.log('No posts in index, trying fallback...');
           posts = await loadBlogListFallback();
         }
         
+        console.log(`Loaded ${posts.length} blog posts`);
         setBlogPosts(posts);
       } catch (error) {
         console.error('Error loading blog posts:', error);
@@ -57,16 +59,23 @@ const BlogPage = () => {
     blogPosts.forEach(post => {
       if (post.category) {
         categories.add(post.category);
-      } else {
-        categories.add('Uncategorised');
       }
     });
-    return ['All', ...Array.from(categories).sort()];
+    const sortedCategories = Array.from(categories).sort();
+    
+    // Always include "All" first, then categories, then "Uncategorised" if there are posts without categories
+    const hasUncategorised = blogPosts.some(post => !post.category);
+    const result = ['All', ...sortedCategories];
+    if (hasUncategorised) {
+      result.push('Uncategorised');
+    }
+    return result;
   }, [blogPosts]);
 
   const filteredPosts = useMemo(() => {
     let posts = searchTerm ? searchResults : blogPosts;
     
+    // Category filtering - "All" shows everything
     if (selectedCategory && selectedCategory !== 'All') {
       posts = posts.filter(post => {
         if (selectedCategory === 'Uncategorised') {
@@ -139,6 +148,13 @@ const BlogPage = () => {
               Expert insights, guides, and updates on UK business formation, compliance, and growth strategies.
             </p>
             
+            {/* Debug info in development */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mb-4 p-2 bg-yellow-100 text-yellow-800 rounded text-sm">
+                Debug: Found {blogPosts.length} posts, filtered to {filteredPosts.length}
+              </div>
+            )}
+            
             {/* RSS Link */}
             <Link to="/blog/rss.xml" className="inline-flex items-center gap-2 text-primary hover:underline mb-6 sm:mb-8">
               <Rss className="h-4 w-4" />
@@ -179,12 +195,17 @@ const BlogPage = () => {
           <div className="container mx-auto max-w-6xl">
             {paginatedPosts.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">
+                <p className="text-muted-foreground text-lg mb-4">
                   {blogPosts.length === 0 
                     ? "No blog posts available yet. Check back soon!"
                     : "No articles found matching your criteria."
                   }
                 </p>
+                {process.env.NODE_ENV === 'development' && (
+                  <Link to="/content-check" className="text-primary hover:underline">
+                    → Check Content Diagnostics
+                  </Link>
+                )}
               </div>
             ) : (
               <>
