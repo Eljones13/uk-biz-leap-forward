@@ -14,12 +14,12 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
     mdx({ 
       include: ['**/*.mdx', '**/*.md'],
       remarkPlugins: [remarkGfm], 
       rehypePlugins: [rehypeSanitize] 
     }),
+    react(),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),
