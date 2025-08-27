@@ -25,7 +25,7 @@ const ContactPage = () => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase
-        .from('contact_messages')
+        .from('contact_messages' as any)
         .insert([{ email, subject, message }]);
 
       if (error) throw error;

@@ -125,6 +125,30 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       gdpr_requests: {
         Row: {
           id: string
@@ -284,6 +308,27 @@ export type Database = {
           subscription_tier?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      waitlist_emails: {
+        Row: {
+          created_at: string
+          email: string
+          feature: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          feature?: string | null
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          feature?: string | null
+          id?: string
         }
         Relationships: []
       }

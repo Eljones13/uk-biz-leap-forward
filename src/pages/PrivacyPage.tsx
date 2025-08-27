@@ -1,23 +1,8 @@
 
 import { SEO } from "@/components/seo/SEO";
-import { useEffect, useState } from "react";
 import { SITE } from "@/config/site";
 
 const PrivacyPage = () => {
-  const [content, setContent] = useState<string>("");
-
-  useEffect(() => {
-    const loadContent = async () => {
-      try {
-        const module = await import("../content/legal/privacy.mdx");
-        setContent(module.default);
-      } catch (error) {
-        console.error("Failed to load privacy content:", error);
-      }
-    };
-    loadContent();
-  }, []);
-
   return (
     <>
       <SEO 

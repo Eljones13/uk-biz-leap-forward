@@ -26,7 +26,7 @@ export const BetaFeatureGate = ({ title, description, demoUrl }: BetaFeatureGate
     setIsSubmitting(true);
     try {
       const { error } = await supabase
-        .from('waitlist_emails')
+        .from('waitlist_emails' as any)
         .insert([{ email, feature: title }]);
 
       if (error) throw error;
