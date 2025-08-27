@@ -9,6 +9,7 @@ interface SEOProps {
   url?: string;
   date?: string;
   author?: string;
+  jsonLd?: any | any[];
 }
 
 export const SEO = ({ 
@@ -18,7 +19,8 @@ export const SEO = ({
   image = '/placeholder.svg',
   url,
   date,
-  author
+  author,
+  jsonLd
 }: SEOProps) => {
   const fullTitle = `${title} | BusinessBuilder Pro`;
   const fullUrl = url ? `https://businessbuilder.pro${url}` : 'https://businessbuilder.pro';
@@ -47,6 +49,13 @@ export const SEO = ({
       )}
       {type === 'article' && author && (
         <meta property="article:author" content={author} />
+      )}
+      
+      {/* JSON-LD structured data */}
+      {jsonLd && (
+        <script type="application/ld+json">
+          {JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd])}
+        </script>
       )}
     </Helmet>
   );
