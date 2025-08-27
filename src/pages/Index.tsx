@@ -49,31 +49,27 @@ const Index = () => {
     }
   ];
 
+  const trustLogos = [
+    "Companies House", "HMRC", "Stripe", "Barclays", "Tide", "Starling"
+  ];
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Building2 className="h-6 w-6 text-primary" />
-              <span className="font-bold text-xl">BusinessBuilder Pro</span>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button variant="ghost">How it Works</Button>
-              <Button variant="ghost">Pricing</Button>
-              <Link to="/dashboard">
-                <Button>Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-4">
+      {/* Enhanced Hero Section with Background Image */}
+      <section 
+        className="relative py-20 px-4 min-h-[600px] lg:min-h-[700px] flex items-center"
+        style={{
+          backgroundImage: "url('/lovable-uploads/a0f74d28-b829-433c-903d-1c2c8e45ef5e.png'), linear-gradient(to bottom, #F3F5F8, #F3F5F8)",
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundRepeat: "no-repeat"
+        }}
+      >
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/40" />
+        
+        <div className="container mx-auto max-w-4xl text-center relative z-10">
+          <Badge variant="secondary" className="mb-4 bg-white/90 text-primary">
             UK's #1 Business Formation Platform
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
@@ -81,7 +77,7 @@ const Index = () => {
             <br />
             The Smart Way
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg p-4">
             From company registration at Companies House to building business credit and securing funding. 
             We guide UK entrepreneurs through every step of business formation and growth.
           </p>
@@ -92,16 +88,32 @@ const Index = () => {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Button variant="outline" size="lg">
+            <Button variant="outline" size="lg" className="bg-white/90 hover:bg-white">
               Watch Demo
             </Button>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-6 mt-12 text-sm text-muted-foreground">
+          <div className="flex flex-wrap justify-center gap-6 mt-12 text-sm">
             {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-center gap-2">
+              <div key={index} className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span>{benefit}</span>
+                <span className="text-gray-700">{benefit}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Bar */}
+      <section className="py-8 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-6xl">
+          <p className="text-center text-sm text-muted-foreground mb-6">
+            Trusted by founders across the UK
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
+            {trustLogos.map((logo, index) => (
+              <div key={index} className="text-lg font-semibold text-muted-foreground">
+                {logo}
               </div>
             ))}
           </div>
@@ -236,53 +248,6 @@ const Index = () => {
           </Link>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="border-t py-12 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Building2 className="h-5 w-5 text-primary" />
-                <span className="font-bold">BusinessBuilder Pro</span>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                The UK's leading platform for business formation and growth.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Platform</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Company Registration</li>
-                <li>Compliance Tools</li>
-                <li>Credit Building</li>
-                <li>Document Generation</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Help Center</li>
-                <li>Live Chat</li>
-                <li>Email Support</li>
-                <li>Phone Support</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>GDPR Compliance</li>
-                <li>Cookie Policy</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            © 2024 BusinessBuilder Pro. All rights reserved.
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

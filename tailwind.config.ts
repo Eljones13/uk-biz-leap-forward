@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -67,6 +68,21 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+			},
+			fontSize: {
+				'4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+				'5xl': ['3rem', { lineHeight: '3.25rem' }],
+				'6xl': ['3.75rem', { lineHeight: '4rem' }],
+			},
+			maxWidth: {
+				'7xl': '80rem',
+			},
+			spacing: {
+				'18': '4.5rem',
+				'72': '18rem',
 			},
 			keyframes: {
 				'accordion-down': {
