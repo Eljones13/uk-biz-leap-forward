@@ -4,94 +4,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Calendar, User, ArrowLeft, Share2, BookOpen } from "lucide-react";
-import { useState, useEffect } from "react";
 import { SEO } from "@/components/seo/SEO";
 import { NewsletterSignup } from "@/components/mdx/NewsletterSignup";
 import { AuthorCard } from "@/components/blog/AuthorCard";
 import { SecureMDXProvider } from "@/components/mdx/SecureMDXProvider";
 import { useAuthor } from "@/hooks/useAuthors";
-// @ts-ignore
-import contentIndex from "@/content-index.json";
-// @ts-ignore
-import { modules } from "@/content-modules.mjs";
+import { getBlogPostBySlug } from "@/lib/postLoader";
 
 const BlogPostPage = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<any>(null);
-  const [MDXContent, setMDXContent] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { slug = '' } = useParams<{ slug: string }>();
   const { data: author } = useAuthor('businessbuilder-pro');
-
-  useEffect(() => {
-    const loadPost = async () => {
-      if (!slug) return;
-      
-      try {
-        const postData = contentIndex.find((item: any) => 
-          item.type === 'blog' && item.slug === slug
-        );
-        
-        if (!postData) {
-          setError('Post not found');
-          setLoading(false);
-          return;
-        }
-
-        // Validate required frontmatter
-        if (!postData.title || !postData.date) {
-          setError('Invalid post data');
-          setLoading(false);
-          return;
-        }
-
-        // Load MDX module with error handling
-        const moduleLoader = modules[`blog/${slug}`];
-        if (moduleLoader) {
-          try {
-            const module = await moduleLoader();
-            setMDXContent(() => module.default);
-          } catch (moduleError) {
-            console.error('Error loading MDX module:', moduleError);
-            setError('Failed to load post content');
-            setLoading(false);
-            return;
-          }
-        }
-        
-        setPost({
-          ...postData,
-          author: postData.author || 'BusinessBuilder Pro'
-        });
-      } catch (error) {
-        console.error('Error loading post:', error);
-        setError('Failed to load post');
-      }
-      
-      setLoading(false);
-    };
-
-    loadPost();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !post) {
+  
+  const postData = getBlogPostBySlug(slug);
+  
+  if (!postData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-4">Blog Post Not Found</h1>
           <p className="text-muted-foreground mb-6">
-            {error || "The blog post you're looking for doesn't exist."}
+            The blog post you're looking for doesn't exist.
           </p>
           <Link to="/blog">
             <Button>
@@ -104,7 +37,18 @@ const BlogPostPage = () => {
     );
   }
 
+  const { Component, frontmatter } = postData;
+  const post = {
+    title: frontmatter.title || slug,
+    description: frontmatter.description || '',
+    date: frontmatter.date || '',
+    author: frontmatter.author || 'BusinessBuilder Pro',
+    tags: frontmatter.tags || [],
+    slug
+  };
+
   const formatDate = (dateString: string) => {
+    if (!dateString) return 'Recently';
     return new Date(dateString).toLocaleDateString('en-GB', {
       year: 'numeric',
       month: 'long',
@@ -233,11 +177,9 @@ const BlogPostPage = () => {
 
             {/* Article Content */}
             <div className="prose prose-lg max-w-none">
-              {MDXContent && (
-                <SecureMDXProvider>
-                  <MDXContent />
-                </SecureMDXProvider>
-              )}
+              <SecureMDXProvider>
+                <Component />
+              </SecureMDXProvider>
             </div>
 
             {/* Newsletter Signup */}

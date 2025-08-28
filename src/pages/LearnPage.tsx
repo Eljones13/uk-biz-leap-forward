@@ -170,50 +170,55 @@ const LearnPage = () => {
                       </div>
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {categoryContent.map((item) => (
-                          <Card key={`${item.category}-${item.slug}`} className="hover:shadow-lg transition-shadow">
-                            <CardHeader>
-                              <div className="flex items-center justify-between mb-2">
-                                <Badge variant="outline" className="capitalize">{item.category.replace('-', ' ')}</Badge>
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                  <Clock className="h-3 w-3" />
-                                  <span className="hidden sm:inline">Updated </span>
-                                  <span>{formatDate(item.date)}</span>
+                        {categoryContent.map((item) => {
+                          // Extract the slug part after category for URL
+                          const slugPart = item.slug.includes('/') ? item.slug.split('/').slice(1).join('/') : item.slug;
+                          
+                          return (
+                            <Card key={`${item.category}-${item.slug}`} className="hover:shadow-lg transition-shadow">
+                              <CardHeader>
+                                <div className="flex items-center justify-between mb-2">
+                                  <Badge variant="outline" className="capitalize">{item.category.replace('-', ' ')}</Badge>
+                                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                    <Clock className="h-3 w-3" />
+                                    <span className="hidden sm:inline">Updated </span>
+                                    <span>{formatDate(item.date)}</span>
+                                  </div>
                                 </div>
-                              </div>
-                              <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
-                                <Link to={`/learn/${item.category}/${item.slug}`}>
-                                  {item.title}
-                                </Link>
-                              </CardTitle>
-                              <CardDescription className="line-clamp-3">
-                                {item.description}
-                              </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="flex flex-wrap gap-2 mb-4">
-                                {item.tags?.map((tag) => (
-                                  <Badge 
-                                    key={tag} 
-                                    variant="secondary" 
-                                    className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                                    onClick={() => setSelectedTag(tag)}
-                                  >
-                                    {tag}
-                                  </Badge>
-                                ))}
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-muted-foreground">
-                                  By BusinessBuilder Pro
-                                </span>
-                                <Link to={`/learn/${item.category}/${item.slug}`}>
-                                  <ArrowRight className="h-4 w-4 text-primary hover:translate-x-1 transition-transform" />
-                                </Link>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
+                                <CardTitle className="line-clamp-2 hover:text-primary transition-colors">
+                                  <Link to={`/learn/${item.category}/${slugPart}`}>
+                                    {item.title}
+                                  </Link>
+                                </CardTitle>
+                                <CardDescription className="line-clamp-3">
+                                  {item.description}
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                  {item.tags?.map((tag) => (
+                                    <Badge 
+                                      key={tag} 
+                                      variant="secondary" 
+                                      className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                                      onClick={() => setSelectedTag(tag)}
+                                    >
+                                      {tag}
+                                    </Badge>
+                                  ))}
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm text-muted-foreground">
+                                    By BusinessBuilder Pro
+                                  </span>
+                                  <Link to={`/learn/${item.category}/${slugPart}`}>
+                                    <ArrowRight className="h-4 w-4 text-primary hover:translate-x-1 transition-transform" />
+                                  </Link>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
                       </div>
                     )}
                   </TabsContent>
