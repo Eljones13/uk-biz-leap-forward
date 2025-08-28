@@ -30,6 +30,7 @@ export const ArticleEditor = ({ article, type, onSave, onCancel }: ArticleEditor
   const [slug, setSlug] = useState(article?.slug || '');
   const [excerpt, setExcerpt] = useState(article?.excerpt || '');
   const [contentMd, setContentMd] = useState(article?.content_md || '');
+  const [contentHtml, setContentHtml] = useState(article?.content_html || '');
   const [category, setCategory] = useState(article?.category || '');
   const [tags, setTags] = useState<string[]>(article?.tags || []);
   const [tagInput, setTagInput] = useState('');
@@ -40,7 +41,18 @@ export const ArticleEditor = ({ article, type, onSave, onCancel }: ArticleEditor
   const updateArticle = useUpdateArticle();
   const { toast } = useToast();
 
-  const contentHtml = markdownToHtml(contentMd);
+  // Convert markdown to HTML whenever contentMd changes
+  useEffect(() => {
+    const convertMarkdown = async () => {
+      if (contentMd) {
+        const html = await markdownToHtml(contentMd);
+        setContentHtml(html);
+      } else {
+        setContentHtml('');
+      }
+    };
+    convertMarkdown();
+  }, [contentMd]);
 
   useEffect(() => {
     if (title && !article) {

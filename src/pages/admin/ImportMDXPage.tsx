@@ -58,13 +58,16 @@ export const ImportMDXPage = () => {
           // 4. Convert to HTML
           // 5. Create the article record
 
+          const mockContentMd = `# ${file.replace('.mdx', '').replace(/-/g, ' ')}\n\nThis content was imported from MDX.`;
+          const mockContentHtml = await markdownToHtml(mockContentMd);
+
           const mockArticle = {
             type: 'blog' as const,
             title: file.replace('.mdx', '').replace(/-/g, ' '),
             slug: file.replace('.mdx', ''),
             excerpt: `Imported from ${file}`,
-            content_md: `# ${file.replace('.mdx', '').replace(/-/g, ' ')}\n\nThis content was imported from MDX.`,
-            content_html: markdownToHtml(`# ${file.replace('.mdx', '').replace(/-/g, ' ')}\n\nThis content was imported from MDX.`),
+            content_md: mockContentMd,
+            content_html: mockContentHtml,
             tags: ['imported'],
             category: 'General',
             status: 'draft' as const
