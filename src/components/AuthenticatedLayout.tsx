@@ -2,10 +2,10 @@
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useSecurityMonitoring } from "@/hooks/useSecurityMonitoring";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 interface AuthenticatedLayoutProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   requireAuth?: boolean;
 }
 
@@ -40,5 +40,7 @@ export const AuthenticatedLayout = ({
     return <Navigate to="/auth" replace />;
   }
 
-  return <>{children}</>;
+  return children ? <>{children}</> : <Outlet />;
 };
+
+export default AuthenticatedLayout;

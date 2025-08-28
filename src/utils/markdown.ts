@@ -8,8 +8,8 @@ marked.setOptions({
   gfm: true
 });
 
-export const markdownToHtml = (markdown: string): string => {
-  const html = marked(markdown);
+export const markdownToHtml = async (markdown: string): Promise<string> => {
+  const html = await marked(markdown);
   return DOMPurify.sanitize(html);
 };
 

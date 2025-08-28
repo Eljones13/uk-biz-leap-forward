@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,12 +7,12 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { CookieBanner } from "@/components/cookies/CookieBanner";
 
 // Layout Components
 import Layout from "@/components/layout/Layout";
-import AuthenticatedLayout from "@/components/AuthenticatedLayout";
+import { AuthenticatedLayout } from "@/components/AuthenticatedLayout";
 
 // Public Pages
 import Index from "@/pages/Index";

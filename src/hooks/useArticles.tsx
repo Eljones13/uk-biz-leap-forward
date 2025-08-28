@@ -53,10 +53,10 @@ export const useArticle = (slug: string) => {
         .from('articles')
         .select('*')
         .eq('slug', slug)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      return data as Article;
+      return data as Article | null;
     }
   });
 };
@@ -66,12 +66,14 @@ export const useCreateArticle = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (article: Partial<Article>) => {
+    mutationFn: async (article: Omit<Article, 'id' | 'created_at' | 'updated_at' | 'author_id'>) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      
       const { data, error } = await supabase
         .from('articles')
         .insert({
           ...article,
-          author_id: user?.id
+          author_id: user.id
         })
         .select()
         .single();
@@ -131,7 +133,7 @@ export const useLogArticleView = () => {
         .from('article_views')
         .insert({
           article_id: articleId,
-          ip_address: null, // You could get this from a service
+          ip_address: null,
           user_agent: navigator.userAgent
         });
 
