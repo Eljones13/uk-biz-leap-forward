@@ -9,16 +9,38 @@ import { NewsletterSignup } from "@/components/mdx/NewsletterSignup";
 import { AuthorCard } from "@/components/blog/AuthorCard";
 import { SecureMDXProvider } from "@/components/mdx/SecureMDXProvider";
 import { useAuthor } from "@/hooks/useAuthors";
+import { useArticle, useLogArticleView } from "@/hooks/useArticles";
 import { getBlogPostBySlug } from "@/lib/postLoader";
 import { format } from "date-fns";
+import { useEffect } from "react";
 
 const BlogPostPage = () => {
   const { slug = '' } = useParams<{ slug: string }>();
   const { data: author } = useAuthor('businessbuilder-pro');
   
-  const postData = getBlogPostBySlug(slug);
+  // Try to get article from Supabase first
+  const { data: article, isLoading } = useArticle(slug);
+  const logView = useLogArticleView();
   
-  if (!postData) {
+  // Fallback to MDX if no Supabase article found
+  const postData = !article && !isLoading ? getBlogPostBySlug(slug) : null;
+  
+  // Log article view when article loads
+  useEffect(() => {
+    if (article) {
+      logView.mutate(article.id);
+    }
+  }, [article, logView]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+  
+  if (!article && !postData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -38,16 +60,33 @@ const BlogPostPage = () => {
     );
   }
 
-  const { Component, meta } = postData;
-  const post = {
-    title: meta.title || slug.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-    description: meta.description || '',
-    date: meta.date || '',
-    author: meta.author || 'BusinessBuilder Pro',
-    tags: Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
-    category: meta.category || '',
-    slug
-  };
+  // Use Supabase article data if available, otherwise fall back to MDX
+  let post;
+  let Component = null;
+
+  if (article) {
+    post = {
+      title: article.title,
+      description: article.excerpt || '',
+      date: article.published_at || article.created_at,
+      author: 'BusinessBuilder Pro',
+      tags: article.tags,
+      category: article.category || '',
+      slug: article.slug
+    };
+  } else if (postData) {
+    const { Component: MDXComponent, meta } = postData;
+    Component = MDXComponent;
+    post = {
+      title: meta.title || slug.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+      description: meta.description || '',
+      date: meta.date || '',
+      author: meta.author || 'BusinessBuilder Pro',
+      tags: Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
+      category: meta.category || '',
+      slug
+    };
+  }
 
   const formatDate = (dateString: string) => {
     if (!dateString) return null;
@@ -60,24 +99,24 @@ const BlogPostPage = () => {
     }
   };
 
-  const formattedDate = formatDate(post.date);
+  const formattedDate = formatDate(post!.date);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": post.title,
-    "description": post.description,
+    "headline": post!.title,
+    "description": post!.description,
     "author": {
       "@type": "Person",
-      "name": post.author
+      "name": post!.author
     },
     "publisher": {
       "@type": "Organization",
       "name": "BusinessBuilder Pro"
     },
-    "datePublished": post.date,
-    "dateModified": post.date,
-    "url": `https://businessbuilder.pro/blog/${post.slug}`
+    "datePublished": post!.date,
+    "dateModified": post!.date,
+    "url": `https://businessbuilder.pro/blog/${post!.slug}`
   };
 
   const breadcrumbJsonLd = {
@@ -99,8 +138,8 @@ const BlogPostPage = () => {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": post.title,
-        "item": `https://businessbuilder.pro/blog/${post.slug}`
+        "name": post!.title,
+        "item": `https://businessbuilder.pro/blog/${post!.slug}`
       }
     ]
   };
@@ -108,12 +147,12 @@ const BlogPostPage = () => {
   return (
     <>
       <SEO 
-        title={post.title}
-        description={post.description}
+        title={post!.title}
+        description={post!.description}
         type="article"
-        url={`/blog/${post.slug}`}
-        date={post.date}
-        author={post.author}
+        url={`/blog/${post!.slug}`}
+        date={post!.date}
+        author={post!.author}
         jsonLd={[jsonLd, breadcrumbJsonLd]}
       />
       
@@ -132,7 +171,7 @@ const BlogPostPage = () => {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{post.title}</BreadcrumbPage>
+                  <BreadcrumbPage>{post!.title}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -151,7 +190,7 @@ const BlogPostPage = () => {
               </Link>
               
               <div className="flex flex-wrap gap-2 mb-4">
-                {post.tags?.map((tag: string) => (
+                {post!.tags?.map((tag: string) => (
                   <Badge key={tag} variant="secondary">
                     <Link to={`/blog/tag/${encodeURIComponent(tag)}`}>
                       {tag}
@@ -160,9 +199,9 @@ const BlogPostPage = () => {
                 ))}
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.title}</h1>
-              {post.description && (
-                <p className="text-xl text-muted-foreground mb-6">{post.description}</p>
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">{post!.title}</h1>
+              {post!.description && (
+                <p className="text-xl text-muted-foreground mb-6">{post!.description}</p>
               )}
               
               <div className="flex items-center gap-6 text-sm text-muted-foreground mb-8">
@@ -175,7 +214,7 @@ const BlogPostPage = () => {
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   <Link to="/blog/author/businessbuilder-pro" className="hover:text-primary">
-                    {post.author}
+                    {post!.author}
                   </Link>
                 </div>
                 <Button variant="outline" size="sm">
@@ -187,9 +226,13 @@ const BlogPostPage = () => {
 
             {/* Article Content */}
             <section className="prose prose-lg max-w-none dark:prose-invert">
-              <SecureMDXProvider>
-                <Component />
-              </SecureMDXProvider>
+              {article ? (
+                <div dangerouslySetInnerHTML={{ __html: article.content_html || '' }} />
+              ) : Component && (
+                <SecureMDXProvider>
+                  <Component />
+                </SecureMDXProvider>
+              )}
             </section>
 
             {/* Newsletter Signup */}

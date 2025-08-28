@@ -1,104 +1,134 @@
 
-import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
-import Layout from "./components/layout/Layout";
-import { ErrorBoundary } from "./components/ErrorBoundary";
-import { SecureMDXProvider } from "./components/mdx/SecureMDXProvider";
+import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "@/hooks/useAuth";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { CookieBanner } from "@/components/cookies/CookieBanner";
 
-// Lazy load pages
-const Index = lazy(() => import("./pages/Index"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const WizardPage = lazy(() => import("./pages/WizardPage"));
-const PricingPage = lazy(() => import("./pages/PricingPage"));
-const AuthPage = lazy(() => import("./pages/AuthPage"));
-const BankingPage = lazy(() => import("./pages/BankingPage"));
-const CreditFundingPage = lazy(() => import("./pages/CreditFundingPage"));
-const DocumentsPage = lazy(() => import("./pages/DocumentsPage"));
-const CompliancePage = lazy(() => import("./pages/CompliancePage"));
-const BlogPage = lazy(() => import("./pages/BlogPage"));
-const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
-const BlogTagPage = lazy(() => import("./pages/BlogTagPage"));
-const BlogAuthorPage = lazy(() => import("./pages/BlogAuthorPage"));
-const LearnPage = lazy(() => import("./pages/LearnPage"));
-const LearnTutorialPage = lazy(() => import("./pages/LearnTutorialPage"));
-const SupportPage = lazy(() => import("./pages/SupportPage"));
-const SettingsPage = lazy(() => import("./pages/SettingsPage"));
-const ContactPage = lazy(() => import("./pages/ContactPage"));
-const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
-const CookiesPage = lazy(() => import("./pages/CookiesPage"));
-const TermsPage = lazy(() => import("./pages/TermsPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
-const ContentCheck = lazy(() => import("./pages/ContentCheck"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+// Layout Components
+import Layout from "@/components/layout/Layout";
+import AuthenticatedLayout from "@/components/AuthenticatedLayout";
+
+// Public Pages
+import Index from "@/pages/Index";
+import AuthPage from "@/pages/AuthPage";
+import BlogPage from "@/pages/BlogPage";
+import BlogPostPage from "@/pages/BlogPostPage";
+import BlogAuthorPage from "@/pages/BlogAuthorPage";
+import BlogTagPage from "@/pages/BlogTagPage";
+import LearnPage from "@/pages/LearnPage";
+import LearnTutorialPage from "@/pages/LearnTutorialPage";
+import AboutPage from "@/pages/AboutPage";
+import ContactPage from "@/pages/ContactPage";
+import PricingPage from "@/pages/PricingPage";
+import NotFound from "@/pages/NotFound";
+
+// Legal Pages
+import TermsPage from "@/pages/TermsPage";
+import PrivacyPage from "@/pages/PrivacyPage";
+import CookiesPage from "@/pages/CookiesPage";
+
+// Authenticated Pages
+import Dashboard from "@/pages/Dashboard";
+import WizardPage from "@/pages/WizardPage";
+import BankingPage from "@/pages/BankingPage";
+import EnhancedBankingPage from "@/pages/EnhancedBankingPage";
+import CreditFundingPage from "@/pages/CreditFundingPage";
+import DocumentsPage from "@/pages/DocumentsPage";
+import CompliancePage from "@/pages/CompliancePage";
+import SettingsPage from "@/pages/SettingsPage";
+import SecurityPage from "@/pages/SecurityPage";
+import SupportPage from "@/pages/SupportPage";
+
+// Admin Pages
+import BlogAdminPage from "@/pages/admin/BlogAdminPage";
+import LearnAdminPage from "@/pages/admin/LearnAdminPage";
+import ImportMDXPage from "@/pages/admin/ImportMDXPage";
+
+// Utility Pages
+import ContentCheck from "@/pages/ContentCheck";
+import SitemapPage from "@/pages/SitemapPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000,
+      staleTime: 5 * 60 * 1000, // 5 minutes
       retry: 1,
     },
   },
 });
 
-function App() {
-  return (
-    <ErrorBoundary>
-      <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
+const App = () => (
+  <ErrorBoundary>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <TooltipProvider>
-            <SecureMDXProvider>
+            <AuthProvider>
               <BrowserRouter>
-                <div className="min-h-screen bg-background font-sans antialiased">
-                  <Suspense fallback={
-                    <div className="min-h-screen flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                        <p className="text-muted-foreground">Loading...</p>
-                      </div>
-                    </div>
+                <Routes>
+                  {/* Public routes with Layout */}
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<Index />} />
+                    <Route path="auth" element={<AuthPage />} />
+                    <Route path="blog" element={<BlogPage />} />
+                    <Route path="blog/:slug" element={<BlogPostPage />} />
+                    <Route path="blog/author/:authorSlug" element={<BlogAuthorPage />} />
+                    <Route path="blog/tag/:tag" element={<BlogTagPage />} />
+                    <Route path="learn" element={<LearnPage />} />
+                    <Route path="learn/:category/:slug" element={<LearnTutorialPage />} />
+                    <Route path="about" element={<AboutPage />} />
+                    <Route path="contact" element={<ContactPage />} />
+                    <Route path="pricing" element={<PricingPage />} />
+                    <Route path="terms" element={<TermsPage />} />
+                    <Route path="privacy" element={<PrivacyPage />} />
+                    <Route path="cookies" element={<CookiesPage />} />
+                    <Route path="content-check" element={<ContentCheck />} />
+                    <Route path="sitemap" element={<SitemapPage />} />
+                  </Route>
+
+                  {/* Authenticated routes with AuthenticatedLayout */}
+                  <Route path="/" element={
+                    <ProtectedRoute>
+                      <AuthenticatedLayout />
+                    </ProtectedRoute>
                   }>
-                    <Routes>
-                      <Route path="/" element={<Layout />}>
-                        <Route index element={<Index />} />
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="wizard" element={<WizardPage />} />
-                        <Route path="pricing" element={<PricingPage />} />
-                        <Route path="auth" element={<AuthPage />} />
-                        <Route path="banking" element={<BankingPage />} />
-                        <Route path="credit-funding" element={<CreditFundingPage />} />
-                        <Route path="documents" element={<DocumentsPage />} />
-                        <Route path="compliance" element={<CompliancePage />} />
-                        <Route path="blog" element={<BlogPage />} />
-                        <Route path="blog/:slug" element={<BlogPostPage />} />
-                        <Route path="blog/tag/:tag" element={<BlogTagPage />} />
-                        <Route path="blog/author/:slug" element={<BlogAuthorPage />} />
-                        <Route path="learn" element={<LearnPage />} />
-                        <Route path="learn/:category/:slug" element={<LearnTutorialPage />} />
-                        <Route path="support" element={<SupportPage />} />
-                        <Route path="settings" element={<SettingsPage />} />
-                        <Route path="contact" element={<ContactPage />} />
-                        <Route path="privacy" element={<PrivacyPage />} />
-                        <Route path="cookies" element={<CookiesPage />} />
-                        <Route path="terms" element={<TermsPage />} />
-                        <Route path="about" element={<AboutPage />} />
-                        <Route path="content-check" element={<ContentCheck />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Route>
-                    </Routes>
-                  </Suspense>
-                  <Toaster />
-                </div>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="wizard" element={<WizardPage />} />
+                    <Route path="banking" element={<BankingPage />} />
+                    <Route path="enhanced-banking" element={<EnhancedBankingPage />} />
+                    <Route path="credit-funding" element={<CreditFundingPage />} />
+                    <Route path="documents" element={<DocumentsPage />} />
+                    <Route path="compliance" element={<CompliancePage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                    <Route path="security" element={<SecurityPage />} />
+                    <Route path="support" element={<SupportPage />} />
+                    
+                    {/* Admin routes */}
+                    <Route path="admin/blog" element={<BlogAdminPage />} />
+                    <Route path="admin/learn" element={<LearnAdminPage />} />
+                    <Route path="admin/import" element={<ImportMDXPage />} />
+                  </Route>
+
+                  {/* 404 page */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <CookieBanner />
+                <Toaster />
+                <Sonner />
               </BrowserRouter>
-            </SecureMDXProvider>
+            </AuthProvider>
           </TooltipProvider>
-        </QueryClientProvider>
-      </HelmetProvider>
-    </ErrorBoundary>
-  );
-}
+        </ThemeProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  </ErrorBoundary>
+);
 
 export default App;
