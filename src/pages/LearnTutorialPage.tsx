@@ -7,6 +7,7 @@ import { Clock, User, ArrowLeft, BookOpen } from "lucide-react";
 import { SEO } from "@/components/seo/SEO";
 import { SecureMDXProvider } from "@/components/mdx/SecureMDXProvider";
 import { getLearnTutorialBySlug } from "@/lib/postLoader";
+import { format } from "date-fns";
 
 const categoryNames = {
   "company-formation": "Company Formation",
@@ -41,26 +42,30 @@ const LearnTutorialPage = () => {
     );
   }
 
-  const { Component, frontmatter } = tutorialData;
+  const { Component, meta } = tutorialData;
   const tutorial = {
-    title: frontmatter.title || slug,
-    description: frontmatter.description || '',
-    date: frontmatter.date || '',
-    lastUpdated: frontmatter.lastUpdated || frontmatter.date || '',
-    author: frontmatter.author || 'BusinessBuilder Pro',
-    tags: frontmatter.tags || [],
+    title: meta.title || slug.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+    description: meta.description || '',
+    date: meta.date || '',
+    lastUpdated: meta.lastUpdated || meta.date || '',
+    author: meta.author || 'BusinessBuilder Pro',
+    tags: Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
     category,
     slug
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'Recently';
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    if (!dateString) return null;
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return null;
+      return format(date, 'PPP');
+    } catch {
+      return null;
+    }
   };
+
+  const formattedLastUpdated = formatDate(tutorial.lastUpdated || tutorial.date);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -174,26 +179,30 @@ const LearnTutorialPage = () => {
               </div>
               
               <h1 className="text-4xl md:text-5xl font-bold mb-4">{tutorial.title}</h1>
-              <p className="text-xl text-muted-foreground mb-6">{tutorial.description}</p>
+              {tutorial.description && (
+                <p className="text-xl text-muted-foreground mb-6">{tutorial.description}</p>
+              )}
               
               <div className="flex items-center gap-6 text-sm text-muted-foreground mb-8">
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   <span>{tutorial.author}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>Last updated {formatDate(tutorial.lastUpdated || tutorial.date)}</span>
-                </div>
+                {formattedLastUpdated && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>Last updated {formattedLastUpdated}</span>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Tutorial Content */}
-            <div className="prose prose-lg max-w-none">
+            <section className="prose prose-lg max-w-none dark:prose-invert">
               <SecureMDXProvider>
                 <Component />
               </SecureMDXProvider>
-            </div>
+            </section>
 
             {/* CTA Section */}
             <div className="mt-12 p-6 bg-muted/50 rounded-2xl text-center">

@@ -10,6 +10,7 @@ import { AuthorCard } from "@/components/blog/AuthorCard";
 import { SecureMDXProvider } from "@/components/mdx/SecureMDXProvider";
 import { useAuthor } from "@/hooks/useAuthors";
 import { getBlogPostBySlug } from "@/lib/postLoader";
+import { format } from "date-fns";
 
 const BlogPostPage = () => {
   const { slug = '' } = useParams<{ slug: string }>();
@@ -37,24 +38,29 @@ const BlogPostPage = () => {
     );
   }
 
-  const { Component, frontmatter } = postData;
+  const { Component, meta } = postData;
   const post = {
-    title: frontmatter.title || slug,
-    description: frontmatter.description || '',
-    date: frontmatter.date || '',
-    author: frontmatter.author || 'BusinessBuilder Pro',
-    tags: frontmatter.tags || [],
+    title: meta.title || slug.split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+    description: meta.description || '',
+    date: meta.date || '',
+    author: meta.author || 'BusinessBuilder Pro',
+    tags: Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
+    category: meta.category || '',
     slug
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'Recently';
-    return new Date(dateString).toLocaleDateString('en-GB', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    if (!dateString) return null;
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return null;
+      return format(date, 'PPP');
+    } catch {
+      return null;
+    }
   };
+
+  const formattedDate = formatDate(post.date);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -155,13 +161,17 @@ const BlogPostPage = () => {
               </div>
               
               <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.title}</h1>
-              <p className="text-xl text-muted-foreground mb-6">{post.description}</p>
+              {post.description && (
+                <p className="text-xl text-muted-foreground mb-6">{post.description}</p>
+              )}
               
               <div className="flex items-center gap-6 text-sm text-muted-foreground mb-8">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{formatDate(post.date)}</span>
-                </div>
+                {formattedDate && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <span>{formattedDate}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4" />
                   <Link to="/blog/author/businessbuilder-pro" className="hover:text-primary">
@@ -176,11 +186,11 @@ const BlogPostPage = () => {
             </div>
 
             {/* Article Content */}
-            <div className="prose prose-lg max-w-none">
+            <section className="prose prose-lg max-w-none dark:prose-invert">
               <SecureMDXProvider>
                 <Component />
               </SecureMDXProvider>
-            </div>
+            </section>
 
             {/* Newsletter Signup */}
             <NewsletterSignup />
