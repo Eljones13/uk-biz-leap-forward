@@ -47,8 +47,8 @@ export function getBlogPostBySlug(slugParam: string) {
   const raw = BLOG_RAW[hit.path] || '';
   const frontmatterFromRaw = parseFrontmatter(raw);
   
-  // Normalize metadata: prefer frontmatter from MDX export, fallback to parsed YAML
-  const meta = mod.frontmatter ?? mod.meta ?? frontmatterFromRaw ?? {};
+  // Normalize metadata: prefer frontmatter from MDX export, fallback to parsed YAML, then to ESM meta
+  const meta = mod.frontmatter ?? frontmatterFromRaw ?? mod.meta ?? {};
   
   return { 
     Component: mod.default, 
@@ -78,8 +78,8 @@ export function getLearnTutorialBySlug(category: string, slugParam: string) {
   const raw = LEARN_RAW[hit.path] || '';
   const frontmatterFromRaw = parseFrontmatter(raw);
   
-  // Normalize metadata: prefer frontmatter from MDX export, fallback to parsed YAML
-  const meta = mod.frontmatter ?? mod.meta ?? frontmatterFromRaw ?? {};
+  // Normalize metadata: prefer frontmatter from MDX export, fallback to parsed YAML, then to ESM meta
+  const meta = mod.frontmatter ?? frontmatterFromRaw ?? mod.meta ?? {};
   
   return { 
     Component: mod.default, 
