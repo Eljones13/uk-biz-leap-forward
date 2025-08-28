@@ -1,14 +1,26 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Building2, Menu, X } from "lucide-react";
+import { Building2, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { NAV } from "@/config/nav";
+import { NAV, getServicePaths } from "@/config/nav";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -52,6 +64,13 @@ export const Header = () => {
     return location.pathname.startsWith(path);
   };
 
+  const isServicesActive = () => {
+    return getServicePaths().some(path => location.pathname.startsWith(path));
+  };
+
+  const servicesItem = NAV.find(item => item.label === 'Services');
+  const topLevelItems = NAV.filter(item => item.label !== 'Services');
+
   return (
     <>
       <header
@@ -73,18 +92,63 @@ export const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
-              {NAV.map((route) => (
+              {/* Services Dropdown */}
+              {servicesItem && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className={cn(
+                        "px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center gap-1",
+                        isServicesActive()
+                          ? "bg-accent text-accent-foreground"
+                          : "text-muted-foreground"
+                      )}
+                      aria-haspopup="menu"
+                      aria-expanded={false}
+                    >
+                      {servicesItem.label}
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    align="start" 
+                    className="w-56 bg-popover border shadow-md z-50"
+                    role="menu"
+                  >
+                    {servicesItem.children?.map((child) => (
+                      <DropdownMenuItem key={child.path} asChild role="menuitem">
+                        <Link
+                          to={child.path!}
+                          className={cn(
+                            "w-full px-2 py-1.5 text-sm cursor-pointer",
+                            isActiveRoute(child.path!)
+                              ? "bg-accent text-accent-foreground"
+                              : ""
+                          )}
+                          aria-current={isActiveRoute(child.path!) ? "page" : undefined}
+                        >
+                          {child.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {/* Top-level items */}
+              {topLevelItems.map((item) => (
                 <Link
-                  key={route.path}
-                  to={route.path}
+                  key={item.path}
+                  to={item.path!}
                   className={cn(
                     "px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                    isActiveRoute(route.path)
+                    isActiveRoute(item.path!)
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   )}
+                  aria-current={isActiveRoute(item.path!) ? "page" : undefined}
                 >
-                  {route.label}
+                  {item.label}
                 </Link>
               ))}
             </nav>
@@ -131,18 +195,65 @@ export const Header = () => {
           />
           <nav className="relative bg-background border-r shadow-lg h-full w-80 max-w-sm p-6 overflow-y-auto">
             <div className="space-y-1 mb-8">
-              {NAV.map((route) => (
+              {/* Mobile Services Collapsible */}
+              {servicesItem && (
+                <Collapsible 
+                  open={isServicesOpen} 
+                  onOpenChange={setIsServicesOpen}
+                  className="space-y-1"
+                >
+                  <CollapsibleTrigger asChild>
+                    <button
+                      className={cn(
+                        "flex items-center justify-between w-full px-4 py-3 rounded-md text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                        isServicesActive()
+                          ? "bg-accent text-accent-foreground"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {servicesItem.label}
+                      <ChevronDown 
+                        className={cn(
+                          "h-4 w-4 transition-transform",
+                          isServicesOpen ? "rotate-180" : ""
+                        )} 
+                      />
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="space-y-1 pl-4">
+                    {servicesItem.children?.map((child) => (
+                      <Link
+                        key={child.path}
+                        to={child.path!}
+                        className={cn(
+                          "block px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                          isActiveRoute(child.path!)
+                            ? "bg-accent text-accent-foreground"
+                            : "text-muted-foreground"
+                        )}
+                        aria-current={isActiveRoute(child.path!) ? "page" : undefined}
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
+
+              {/* Mobile Top-level items */}
+              {topLevelItems.map((item) => (
                 <Link
-                  key={route.path}
-                  to={route.path}
+                  key={item.path}
+                  to={item.path!}
                   className={cn(
                     "block px-4 py-3 rounded-md text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                    isActiveRoute(route.path)
+                    isActiveRoute(item.path!)
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   )}
+                  aria-current={isActiveRoute(item.path!) ? "page" : undefined}
                 >
-                  {route.label}
+                  {item.label}
                 </Link>
               ))}
             </div>
